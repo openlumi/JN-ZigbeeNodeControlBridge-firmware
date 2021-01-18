@@ -74,7 +74,7 @@ extern "C" {
 
 
 /* Default log level */
-#define LOG_LEVEL   LOG_INFO
+#define LOG_LEVEL   LOG_DEBUG
 
 /* The log macros filter out log messages that have a higher log level than that set in LOG_LEVEL */
 #ifdef UART_DEBUGGING
