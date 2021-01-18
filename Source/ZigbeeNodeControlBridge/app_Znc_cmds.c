@@ -337,10 +337,14 @@ PUBLIC void APP_vProcessIncomingSerialCommands ( uint8    u8RxByte )
         vLog_Printf(TRACE_APP,LOG_DEBUG, "\nPacket Type %x \n",u16PacketType );
 
 
-        switch ( u16PacketType )
-        {
-            case (E_SL_MSG_GET_VERSION):
-            {
+        switch (u16PacketType) {
+            case (E_SL_MSG_SET_RAWMODE): {
+                sZllState.u8RawMode = au8LinkRxBuffer[0];
+                PDM_eSaveRecordData(PDM_ID_APP_ZLL_CMSSION, &sZllState, sizeof(sZllState));
+            }
+                break;
+
+            case (E_SL_MSG_GET_VERSION): {
                 uint32     u32Version = VERSION;
 
                 ZNC_BUF_U8_UPD  ( &au8values[ 0 ], u8Status,      u8Length );
@@ -2163,15 +2167,15 @@ PUBLIC void APP_vProcessIncomingSerialCommands ( uint8    u8RxByte )
                 uint8                              u8SrcEndPoint;
 	            uint8                              u8DstEndPoint;
 	            tsOTA_ImageBlockResponsePayload    sImageBlockResponsePayload;
-	
+
 	            u8SrcEndPoint                                                           =  au8LinkRxBuffer[3];
 	            u8DstEndPoint                                                           =  au8LinkRxBuffer[4];
 	            sImageBlockResponsePayload.u8Status                                     =  au8LinkRxBuffer[6];
-	
+
 	            sImageBlockResponsePayload.uMessage.sWaitForData.u32CurrentTime         =  ZNC_RTN_U32 ( au8LinkRxBuffer, 7  );
 	            sImageBlockResponsePayload.uMessage.sWaitForData.u32RequestTime         =  ZNC_RTN_U32 ( au8LinkRxBuffer, 11  );
 	            sImageBlockResponsePayload.uMessage.sWaitForData.u16BlockRequestDelayMs =  ZNC_RTN_U16 ( au8LinkRxBuffer, 15  );
-	
+
 	            vLog_Printf(TRACE_APP, LOG_DEBUG, "\nAddr Mode: %x", sAddress.eAddressMode);
 	            vLog_Printf(TRACE_APP, LOG_DEBUG, "\nAddr: %x", sAddress.uAddress.u16DestinationAddress);
 	            vLog_Printf(TRACE_APP, LOG_DEBUG, "\nSrcEndPoint: %x", u8SrcEndPoint);
@@ -2180,7 +2184,7 @@ PUBLIC void APP_vProcessIncomingSerialCommands ( uint8    u8RxByte )
 	            vLog_Printf(TRACE_APP, LOG_DEBUG, "\nCurrentTime: %x", sImageBlockResponsePayload.uMessage.sWaitForData.u32CurrentTime);
 	            vLog_Printf(TRACE_APP, LOG_DEBUG, "\nRequestTime: %x", sImageBlockResponsePayload.uMessage.sWaitForData.u32RequestTime);
 	            vLog_Printf(TRACE_APP, LOG_DEBUG, "\nBlockDelay: %x", sImageBlockResponsePayload.uMessage.sWaitForData.u16BlockRequestDelayMs);
-	
+
 	            u8Status = eOTA_ServerImageBlockResponse( u8SrcEndPoint,                    /* u8SourceEndpoint */
 	                                                          u8DstEndPoint,                    /*  u8DestinationEndpoint */
 	                                                          &sAddress,                        /*  *psDestinationAddress */

@@ -227,8 +227,9 @@ tsZllState sZllState = {
         .bValid                 = FALSE,
         .u64IeeeAddrOfServer    = 0,
         .u16NwkAddrOfServer     = 0,
-        .u8OTAserverEP          = 0
+        .u8OTAserverEP          = 0,
 #endif
+        .u8RawMode              = 0,
 };
 
 PUBLIC tszQueue           APP_msgSerialRx;

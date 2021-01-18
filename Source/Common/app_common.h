@@ -132,6 +132,12 @@ extern uint8 u8GPZCLTimerEvent;
 #define GP_ZCL_TICK_TIME        ZTIMER_TIME_MSEC(1)
 #endif
 
+typedef enum
+{
+    RAW_MODE_OFF = 0x00,
+    RAW_MODE_ON
+} teAPP_RawMode;
+
 /****************************************************************************/
 /***        Type Definitions                                              ***/
 /****************************************************************************/
@@ -166,7 +172,8 @@ typedef struct {
     uint16 u16NwkAddrOfServer;
     uint8 u8OTAserverEP;
 #endif
-}tsZllState;
+    uint8_t u8RawMode;
+} tsZllState;
 
 typedef struct {
    uint32 u32LedState;
@@ -188,6 +195,10 @@ PUBLIC uint16 APP_u16ZncWriteDataPattern( uint8 *pu8Data,
                                          uint32 u32Size);
 PUBLIC void APP_vSendDataIndicationToHost( ZPS_tsAfEvent *psStackEvent,
                                            uint8* pau8StatusBuffer);
+
+PUBLIC void Znc_vSendDataIndicationToHost( ZPS_tsAfEvent *psStackEvent,
+                                           uint8* pau8StatusBuffer);
+
 PUBLIC void APP_vSaveAllRecords(void);
 PUBLIC void APP_vSendJoinedFormEventToHost ( uint8    u8FormJoin,
                                              uint8    *pu8Buffer );
