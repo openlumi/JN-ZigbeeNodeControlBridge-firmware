@@ -360,7 +360,16 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
     uint16                 u16Length =  0;
     uint8                  au8LinkTxBuffer[256];
 
-    vLog_Printf ( TRACE_ZCL,LOG_DEBUG, "\nEntering cbZCL_EndpointCallback" );
+    vLog_Printf ( TRACE_ZCL,LOG_DEBUG, "\nEntering cbZCL_EndpointCallback %d", psEvent->eEventType);
+
+    if (sZllState.u8RawMode == RAW_MODE_ON){
+        ZPS_tsAfEvent* psStackEvent = psEvent->pZPSevent;
+        if (psEvent->eEventType != E_ZCL_CBET_CLUSTER_UPDATE  && psEvent->eEventType != E_ZCL_CBET_UNHANDLED_EVENT )
+        {
+            Znc_vSendDataIndicationToHost(psStackEvent, au8LinkTxBuffer);
+            return;
+        }
+    }
 
     switch (psEvent->eEventType)
     {
@@ -382,6 +391,11 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
         case E_ZCL_CBET_UNHANDLED_EVENT:
         {
             vLog_Printf ( TRACE_ZCL, LOG_DEBUG, " (E_ZCL_CBET_UNHANDLED_EVENT)" );
+            ZPS_tsAfEvent* psStackEvent = psEvent->pZPSevent;
+            if (psStackEvent->eType == ZPS_EVENT_APS_DATA_INDICATION)
+            {
+                Znc_vSendDataIndicationToHost(psStackEvent, au8LinkTxBuffer);
+            }
         }
         break;
 

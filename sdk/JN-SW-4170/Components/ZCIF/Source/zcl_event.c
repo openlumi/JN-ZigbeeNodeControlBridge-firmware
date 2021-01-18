@@ -428,6 +428,8 @@ PRIVATE void vZCL_ZigbeeEventHandler(ZPS_tsAfEvent *pZPSevent)
                 sZCL_CallBackEvent.u8EndPoint = pZPSevent->uEvent.sApsDataIndEvent.u8DstEndpoint;
                 vZCL_PassEventToUser(&sZCL_CallBackEvent);
 
+                vZCL_HandleDataIndication(pZPSevent);
+
             }
             break;
         }
@@ -763,7 +765,10 @@ PRIVATE void vZCL_HandleDataIndication(ZPS_tsAfEvent *pZPSevent)
                 if ((psClusterInstance == NULL) && 
                     (bZCL_OverrideHandlingEntireProfileCmd(pZPSevent->uEvent.sApsDataIndEvent.u16ClusterId) == FALSE))
                 {
-                    eZCL_SendDefaultResponse(pZPSevent, E_ZCL_CMDS_UNSUPPORTED_CLUSTER);
+                    sZCL_CallBackEvent.eEventType = E_ZCL_CBET_UNHANDLED_EVENT;
+                    sZCL_CallBackEvent.u8EndPoint = pZPSevent->uEvent.sApsDataIndEvent.u8DstEndpoint;
+                    vZCL_PassEventToUser(&sZCL_CallBackEvent);
+                    //eZCL_SendDefaultResponse(pZPSevent, E_ZCL_CMDS_UNSUPPORTED_CLUSTER);
                 }
                 else
                 {
@@ -797,8 +802,12 @@ PRIVATE void vZCL_HandleDataIndication(ZPS_tsAfEvent *pZPSevent)
                 else
 #endif
                 {
+                    // fix pipiche
+                    sZCL_CallBackEvent.eEventType = E_ZCL_CBET_UNHANDLED_EVENT;
+                    sZCL_CallBackEvent.u8EndPoint = pZPSevent->uEvent.sApsDataIndEvent.u8DstEndpoint;
+                    vZCL_PassEventToUser(&sZCL_CallBackEvent);
 
-                eZCL_SendDefaultResponse(pZPSevent, E_ZCL_CMDS_UNSUPPORTED_CLUSTER);
+                    //eZCL_SendDefaultResponse(pZPSevent, E_ZCL_CMDS_UNSUPPORTED_CLUSTER);
                 }
             }
             else
