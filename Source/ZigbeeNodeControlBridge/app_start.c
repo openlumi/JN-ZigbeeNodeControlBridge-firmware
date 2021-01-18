@@ -113,6 +113,12 @@
 #define TRACE_EXC                                                 TRUE
 #endif
 
+#ifdef DEBUG_PDUM
+#define DEBUG_PDUM                                                TRUE
+#else
+#define DEBUG_PDUM                                                FALSE
+#endif
+
 #if (JENNIC_CHIP_FAMILY == JN516x)
 #define LED1_DIO_PIN                                              ( 1 << 16 )
 #define LED2_DIO_PIN                                              ( 1 << 17 )
