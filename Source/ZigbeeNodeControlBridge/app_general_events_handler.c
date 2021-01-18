@@ -78,7 +78,7 @@
 #endif
 
 #ifdef CLD_GREENPOWER
-#include "App_green_power.h"
+#include "app_green_power.h"
 #endif
 
 /****************************************************************************/

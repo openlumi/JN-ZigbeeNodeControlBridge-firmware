@@ -1,0 +1,7 @@
+sdk/JN-SW-4270
+
+# IntelliJ project files
+.idea
+*.iml
+out
+gen
