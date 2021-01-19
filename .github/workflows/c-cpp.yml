@@ -1,0 +1,36 @@
+name: C/C++ CI
+
+on:
+  push:
+
+env:
+  BUILD_DIR: Build/ZigbeeNodeControlBridge
+  ARTIFACT_DIR: Build/bin
+  SDK_DIR: sdk
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Get toolchain
+      run: mkdir -p ${{ env.SDK_DIR }}/Tools && wget https://github.com/openlumi/BA2-toolchain/releases/download/20201219/ba-toolchain-20201219.tar.bz2 -O - | tar -jx -C ${{ env.SDK_DIR }}/Tools && ln -s ba-toolchain ${{ env.SDK_DIR }}/Tools/ba-elf-ba2-r36379
+    - name: Install xmltodict
+      run: pip3 install xmltodict
+    - name: make
+      id: make
+      run: |
+        for CHIP in JN5169 JN5168; do for BAUD in 115200 1000000; do for GP in 0 1; do for DEBUG in NONE LOG; do
+          make -j8 -C $BUILD_DIR P_SUPPORT=$GP BAUD=$BAUD JENNIC_CHIP=$CHIP JENNIC_CHIP_FAMILY=JN516x DEBUG=$DEBUG
+          make -C $BUILD_DIR BAUD=0 clean
+        done done done done
+        echo "::set-output name=status::success"
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.2.2
+      if: steps.make.outputs.status == 'success' && !cancelled()
+      with:
+        # Artifact name
+        name: firmwares.zip
+        # A file, directory or wildcard pattern that describes what to upload
+        path: ${{ env.ARTIFACT_DIR }}/*.bin
