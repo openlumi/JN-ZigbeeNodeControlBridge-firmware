@@ -24,7 +24,7 @@ PIC_ChannelPriorities:
     .byte 0                 # AES priority
     .byte 0                 # PHY priority
     .byte 5                 # uart0 priority
-    .byte 0                 # uart1 priority
+    .byte 5                 # uart1 priority
     .byte 0                 # timer0 priority
     .byte 0                 # spi slave priority
     .byte 0                 # i2c maste/slave priority
