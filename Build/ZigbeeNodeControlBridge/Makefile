@@ -365,20 +365,21 @@ endif
 
 %.o: %.S
 	$(info Assembling $< ...)
-	$(CC) -c -o $(subst Source,Build,$@) $(CFLAGS) $(INCFLAGS) $< -MD -MF $*.d -MP
-	@echo
+	@$(CC) -c -o $(subst Source,Build,$@) $(CFLAGS) $(INCFLAGS) $< -MD -MF $*.d -MP
+	@echo "CC $<"
 
 %.o: %.c $(APP_SRC_DIR)/pdum_gen.c $(APP_SRC_DIR)/pdum_gen.h $(APP_SRC_DIR)/pdum_apdu.S $(APP_SRC_DIR)/zps_gen.c $(APP_SRC_DIR)/zps_gen.h
 	$(info Compiling $< ...)
-	$(CC) -c -o $(subst Source,Build,$@) $(CFLAGS) $(INCFLAGS) $< -MD -MF $*.d -MP
-	@echo
+	@$(CC) -c -o $(subst Source,Build,$@) $(CFLAGS) $(INCFLAGS) $< -MD -MF $*.d -MP
+	@echo "CC $<"
 
 $(GENERATED_FILE_NAME).elf: $(APPOBJS) $(addsuffix.a,$(addprefix $(COMPONENTS_BASE_DIR)/Library/lib,$(APPLDLIBS)))
 	$(info Linking $@ ...)
-	$(CC) -Wl,--gc-sections -Wl,-u_AppColdStart -Wl,-u_AppWarmStart $(LDFLAGS) -T$(ZNCLKCMD) -o $@ -Wl,--start-group $(APPOBJS) $(addprefix -l,$(LDLIBS))  -lm -Wl,--end-group -Wl,-Map,$(GENERATED_FILE_NAME).map
-
+	@$(CC) -Wl,--gc-sections -Wl,-u_AppColdStart -Wl,-u_AppWarmStart $(LDFLAGS) -T$(ZNCLKCMD) -o $@ -Wl,--start-group $(APPOBJS) $(addprefix -l,$(LDLIBS))  -lm -Wl,--end-group -Wl,-Map,$(GENERATED_FILE_NAME).map
+	@echo "CC $<"
 # Do a second linking with LTO disabled
-	$(CC) -Wl,--cref -Wl,--gc-sections -Wl,-u_AppColdStart -Wl,-u_AppWarmStart $(LDFLAGS) -T$(ZNCLKCMD) -L $(SDK_BASE_DIR)/Stack/ZCL/Build/  -o $@ -Wl,--start-group $(APPOBJS) $(addprefix -l,$(LDLIBS)) -lm -Wl,--end-group -fno-lto -Wl,-Map,$(GENERATED_FILE_NAME)_NOLTO.map
+	@$(CC) -Wl,--cref -Wl,--gc-sections -Wl,-u_AppColdStart -Wl,-u_AppWarmStart $(LDFLAGS) -T$(ZNCLKCMD) -L $(SDK_BASE_DIR)/Stack/ZCL/Build/  -o $@ -Wl,--start-group $(APPOBJS) $(addprefix -l,$(LDLIBS)) -lm -Wl,--end-group -fno-lto -Wl,-Map,$(GENERATED_FILE_NAME)_NOLTO.map
+	@echo "CC $<"
 # Run the Pyt
 
 
