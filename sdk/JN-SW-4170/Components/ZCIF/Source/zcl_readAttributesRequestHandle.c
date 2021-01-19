@@ -297,6 +297,8 @@ PUBLIC   void vZCL_HandleAttributesReadRequest(
     // NTS testing Nov 09. Don't send a good default response here as we have a unicast response that is valid.
 
     // build address structure
+    if (sZCL_CallBackEvent.eZCL_Status == E_ZCL_SUCCESS )
+    {
     eZCL_BuildTransmitAddressStructure(pZPSevent, &sZCL_Address);
     // transmit request
     eZCL_TransmitDataRequest(myPDUM_thAPduInstance,
@@ -305,6 +307,9 @@ PUBLIC   void vZCL_HandleAttributesReadRequest(
                                 pZPSevent->uEvent.sApsDataIndEvent.u8SrcEndpoint,
                                 pZPSevent->uEvent.sApsDataIndEvent.u16ClusterId,
                                 &sZCL_Address);
+    } else {
+        PDUM_eAPduFreeAPduInstance(myPDUM_thAPduInstance);
+    }
 }
 
 /****************************************************************************/
