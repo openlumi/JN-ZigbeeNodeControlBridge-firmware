@@ -376,14 +376,16 @@ PUBLIC void vAppMain(void)
         APP_vSendJoinedFormEventToHost ( u8FormJoin, au8LinkTxBuffer );
         vSL_WriteMessage ( E_SL_MSG_NODE_NON_FACTORY_NEW_RESTART,
                            1,
-                           ( uint8* ) &sZllState.eNodeState ) ;
+                           ( uint8* ) &sZllState.eNodeState,
+                           0 ) ;
         BDB_vStart();
     }
     else
     {
         vSL_WriteMessage( E_SL_MSG_NODE_FACTORY_NEW_RESTART,
                           1,
-                          ( uint8* ) &sZllState.eNodeState );
+                          ( uint8* ) &sZllState.eNodeState,
+                          0 );
     }
     ZTIMER_eStart ( u8TickTimer, ZCL_TICK_TIME );
 
@@ -912,7 +914,8 @@ PUBLIC void app_vFormatAndSendUpdateLists ( void )
     }
     vSL_WriteMessage ( E_SL_MSG_NODE_CLUSTER_LIST,
                        u16Length,
-                       au8LinkTxBuffer );
+                       au8LinkTxBuffer,
+                       0 );
 
         /* Cluster list endpoint HA */
     u16Length = u8BufferLoop =  0;
@@ -926,7 +929,8 @@ PUBLIC void app_vFormatAndSendUpdateLists ( void )
     }
     vSL_WriteMessage ( E_SL_MSG_NODE_CLUSTER_LIST,
                        u16Length,
-                       au8LinkTxBuffer );
+                       au8LinkTxBuffer,
+                       0 );
 
         /* Attribute list basic cluster HA EP*/
     for ( u8Count =  0; u8Count < 13; u8Count++ )
@@ -943,7 +947,8 @@ PUBLIC void app_vFormatAndSendUpdateLists ( void )
         }
         vSL_WriteMessage ( E_SL_MSG_NODE_ATTRIBUTE_LIST,
                            u16Length,
-                           au8LinkTxBuffer );
+                           au8LinkTxBuffer,
+                           0 );
         u16Length =  0;
         u8BufferLoop =  0;
         ZNC_BUF_U8_UPD  ( &au8LinkTxBuffer [ 0 ],            ZIGBEENODECONTROLBRIDGE_ZLO_ENDPOINT,     u16Length );
@@ -956,7 +961,8 @@ PUBLIC void app_vFormatAndSendUpdateLists ( void )
         }
         vSL_WriteMessage ( E_SL_MSG_NODE_COMMAND_ID_LIST,
                            u16Length,
-                           au8LinkTxBuffer );
+                           au8LinkTxBuffer,
+                           0 );
     }
     
 }

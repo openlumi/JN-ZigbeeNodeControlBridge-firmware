@@ -248,14 +248,18 @@ PUBLIC bool bSL_ReadMessage(uint16 *pu16Type, uint16 *pu16Length, uint16 u16MaxL
  *             u16Type                R   Message type
  *             u16Length              R   Message length
  *             pu8Data                R   Message payload
+ *             u8LinkQuality          R   Message radio quality
  * RETURNS:
  * void
  ****************************************************************************/
-PUBLIC void vSL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data)
+PUBLIC void vSL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data, uint8 u8LinkQuality)
 {
     int n;
     uint8 u8CRC;
 
+    u16Length++;
+
+    pu8Data[u16Length-1]=u8LinkQuality;
     u8CRC = u8SL_CalculateCRC(u16Type, u16Length, pu8Data);
 
     DBG_vPrintf(DEBUG_SL, "\nvSL_WriteMessage(%d, %d, %02x)", u16Type, u16Length, u8CRC);

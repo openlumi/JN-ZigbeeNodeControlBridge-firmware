@@ -211,6 +211,8 @@ void APP_vHandleZclEvents ( ZPS_tsAfEvent*    psStackEvent )
     tsZCL_CallBackEvent    sCallBackEvent;
     uint16                 u16Length =  0;
     uint8                  au8LinkTxBuffer[256];
+    uint8                  u8LinkQuality;
+    u8LinkQuality = psStackEvent->uEvent.sApsDataIndEvent.u8LinkQuality;
     /*
      * If the 1 second tick timer has expired, restart it and pass
      * the event on to ZCL
@@ -260,7 +262,8 @@ void APP_vHandleZclEvents ( ZPS_tsAfEvent*    psStackEvent )
                 ZNC_BUF_U8_UPD  ( &au8LinkTxBuffer [u16Length], psStackEvent->uEvent.sApsDataConfirmEvent.u8SequenceNum,       u16Length );
                 vSL_WriteMessage ( E_SL_MSG_APS_DATA_CONFIRM_FAILED,
                                    u16Length,
-                                   au8LinkTxBuffer );
+                                   au8LinkTxBuffer,
+                                   u8LinkQuality );
             }
             break;
 
@@ -359,6 +362,8 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
 {
     uint16                 u16Length =  0;
     uint8                  au8LinkTxBuffer[256];
+    uint8                  u8LinkQuality;
+    u8LinkQuality = psEvent->pZPSevent->uEvent.sApsDataIndEvent.u8LinkQuality;
 
     vLog_Printf ( TRACE_ZCL,LOG_DEBUG, "\nEntering cbZCL_EndpointCallback %d", psEvent->eEventType);
 
@@ -414,7 +419,8 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
                 ZNC_BUF_U8_UPD  ( &au8LinkTxBuffer [u16Length],  psEvent->uMessage.sDefaultResponse.u8StatusCode,                 u16Length );
                 vSL_WriteMessage ( E_SL_MSG_DEFAULT_RESPONSE,
                                    u16Length,
-                                   au8LinkTxBuffer);
+                                   au8LinkTxBuffer,
+                                   u8LinkQuality );
             }
         }
         break;
@@ -519,15 +525,18 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
             if((psEvent->eEventType == E_ZCL_CBET_READ_INDIVIDUAL_ATTRIBUTE_RESPONSE))
                 vSL_WriteMessage ( E_SL_MSG_READ_ATTRIBUTE_RESPONSE,
                                    u16Length,
-                                   au8LinkTxBuffer );
+                                   au8LinkTxBuffer,
+                                   u8LinkQuality );
             else if((psEvent->eEventType == E_ZCL_CBET_REPORT_INDIVIDUAL_ATTRIBUTE))
                 vSL_WriteMessage ( E_SL_MSG_REPORT_IND_ATTR_RESPONSE,
                                    u16Length,
-                                   au8LinkTxBuffer );
+                                   au8LinkTxBuffer,
+                                   u8LinkQuality );
             else if((psEvent->eEventType == E_ZCL_CBET_WRITE_ATTRIBUTES_RESPONSE))
                 vSL_WriteMessage ( E_SL_MSG_WRITE_ATTRIBUTE_RESPONSE,
                                    u16Length,
-                                   au8LinkTxBuffer );
+                                   au8LinkTxBuffer,
+                                   u8LinkQuality );
 
         }
         break;
@@ -544,7 +553,8 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
             ZNC_BUF_U8_UPD  ( &au8LinkTxBuffer [u16Length], psEvent->uMessage.sAttributeReportingConfigurationResponse.eCommandStatus,    u16Length );
             vSL_WriteMessage ( E_SL_MSG_CONFIG_REPORTING_RESPONSE,
                                u16Length,
-                               au8LinkTxBuffer );
+                               au8LinkTxBuffer,
+                               u8LinkQuality );
         }
         break;
 
@@ -573,7 +583,8 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
 
             vSL_WriteMessage ( E_SL_MSG_READ_REPORT_CONFIG_RESPONSE,
                                u16Length,
-                               au8LinkTxBuffer );
+                               au8LinkTxBuffer,
+                               u8LinkQuality );
         }
         break;
 
@@ -586,7 +597,8 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
 
             vSL_WriteMessage ( E_SL_MSG_ATTRIBUTE_DISCOVERY_RESPONSE,
                                u16Length,
-                               au8LinkTxBuffer );
+                               au8LinkTxBuffer,
+                               u8LinkQuality );
         }
         break;
 
@@ -600,7 +612,8 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
 
             vSL_WriteMessage ( E_SL_MSG_ATTRIBUTE_EXT_DISCOVERY_RESPONSE,
                                u16Length,
-                               au8LinkTxBuffer );
+                               au8LinkTxBuffer,
+                               u8LinkQuality );
         }
         break;
 
@@ -612,7 +625,8 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
             ZNC_BUF_U8_UPD   ( &au8LinkTxBuffer [u16Length], psEvent->uMessage.sCommandsReceivedDiscoveryIndividualResponse.u8CommandIndex,    u16Length );
             vSL_WriteMessage ( E_SL_MSG_COMMAND_RECEIVED_DISCOVERY_INDIVIDUAL_RESPONSE,
                                u16Length,
-                               au8LinkTxBuffer );
+                               au8LinkTxBuffer,
+                               u8LinkQuality );
         }
         break;
         
@@ -624,7 +638,8 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
 
             vSL_WriteMessage ( E_SL_MSG_COMMAND_RECEIVED_DISCOVERY_RESPONSE,
                                u16Length,
-                               au8LinkTxBuffer );
+                               au8LinkTxBuffer,
+                               u8LinkQuality );
         }
         break;
 
@@ -635,7 +650,8 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
             ZNC_BUF_U8_UPD ( &au8LinkTxBuffer [u16Length],  psEvent->uMessage.sCommandsGeneratedDiscoveryIndividualResponse.u8CommandIndex,   u16Length );
             vSL_WriteMessage ( E_SL_MSG_COMMAND_GENERATED_DISCOVERY_INDIVIDUAL_RESPONSE,
                                u16Length,
-                               au8LinkTxBuffer );
+                               au8LinkTxBuffer,
+                               u8LinkQuality );
         }
         break;
 
@@ -647,7 +663,8 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
 
             vSL_WriteMessage ( E_SL_MSG_COMMAND_GENERATED_DISCOVERY_RESPONSE,
                                u16Length,
-                               au8LinkTxBuffer );
+                               au8LinkTxBuffer,
+                               u8LinkQuality );
         }
         break;
         
@@ -719,7 +736,8 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
 
                             vSL_WriteMessage ( E_SL_MSG_BLOCK_REQUEST,
                                                u16Length,
-                                               au8LinkTxBuffer );
+                                               au8LinkTxBuffer,
+                                               u8LinkQuality );
                         }
                         break;
 
@@ -747,7 +765,8 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
 
                             vSL_WriteMessage ( E_SL_MSG_UPGRADE_END_REQUEST,
                                                u16Length,
-                                               au8LinkTxBuffer );
+                                               au8LinkTxBuffer,
+                                               u8LinkQuality );
                             uint32 i;
                             for (i=0;i<OTA_TOTAL_ACTIVE_IMAGES_ON_SERVER;i++)
                             {
@@ -787,7 +806,8 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
                     ZNC_BUF_U8_UPD ( &au8LinkTxBuffer [u16Length], psCallBackMessage->u8CommandId,    u16Length );
                     vSL_WriteMessage ( E_SL_MSG_ONOFF_UPDATE,
                                        u16Length,
-                                       au8LinkTxBuffer );
+                                       au8LinkTxBuffer,
+                                       u8LinkQuality );
                 }
                 break;
                 case GENERAL_CLUSTER_ID_IDENTIFY:
@@ -850,7 +870,8 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
                     }
                     vSL_WriteMessage ( u16Command,
                                        u16Length,
-                                       au8LinkTxBuffer );
+                                       au8LinkTxBuffer,
+                                       u8LinkQuality );
 
                 }//General Group cluster id
                 break;
@@ -973,7 +994,8 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
                 }
                 vSL_WriteMessage( u16Command,
                                   u16Length,
-                                  au8LinkTxBuffer );
+                                  au8LinkTxBuffer,
+                                  u8LinkQuality );
             }
             break;
 
@@ -1009,7 +1031,8 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
 
                         vSL_WriteMessage ( E_SL_MSG_IAS_ZONE_STATUS_CHANGE_NOTIFY,
                                            u16Length,
-                                           au8LinkTxBuffer );
+                                           au8LinkTxBuffer,
+                                           u8LinkQuality );
                     }
                     break; //IAS ZONE CHANGE NOTIFY
 
@@ -1037,7 +1060,8 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
 
                 vSL_WriteMessage ( E_SL_MSG_ASC_LOG_MSG_RESPONSE,
                                    u16Length,
-                                   au8LinkTxBuffer );
+                                   au8LinkTxBuffer,
+                                   u8LinkQuality );
             }
             break;
 #ifdef CLD_GREENPOWER

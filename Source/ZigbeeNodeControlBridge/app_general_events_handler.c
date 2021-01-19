@@ -212,7 +212,8 @@ PUBLIC void APP_vHandleAppEvents ( void )
             ZNC_BUF_U8_UPD ( &au8LinkTxBuffer [0], bStatus, u16Length );
             vSL_WriteMessage ( E_SL_MSG_GET_PERMIT_JOIN_RESPONSE,
                                u16Length,
-                               au8LinkTxBuffer );
+                               au8LinkTxBuffer,
+                               0 );
         }
 
         if(sAppEvent.eType == APP_E_EVENT_NETWORK_STATE)
@@ -236,7 +237,7 @@ PUBLIC void APP_vHandleAppEvents ( void )
             ZNC_BUF_U64_UPD (&au8LinkTxBuffer[u16TxSize], u64PANID,         u16TxSize);
             ZNC_BUF_U8_UPD (&au8LinkTxBuffer[u16TxSize], (uint8)u32Channel, u16TxSize);
 
-            vSL_WriteMessage(E_SL_MSG_NETWORK_STATE_RSP, u16TxSize, au8LinkTxBuffer);
+            vSL_WriteMessage(E_SL_MSG_NETWORK_STATE_RSP, u16TxSize, au8LinkTxBuffer, 0 );
         }
 
         if(sAppEvent.eType == APP_E_EVENT_OOB_COMMISSIONING_DATA)
@@ -314,7 +315,8 @@ PUBLIC void APP_vHandleAppEvents ( void )
             ZNC_BUF_U8_UPD  (&au8LinkTxBuffer[u16TxSize], u8Status,             u16TxSize);
             vSL_WriteMessage(E_SL_MSG_OUTOFBAND_COMMISSIONING_DATA_RSP,
                              u16TxSize,
-                             au8LinkTxBuffer);
+                             au8LinkTxBuffer,
+                             0 );
         }
 
         if(sAppEvent.eType == APP_E_EVENT_ENCRYPT_SEND_KEY)
@@ -379,7 +381,8 @@ PUBLIC void APP_vHandleAppEvents ( void )
 
             vSL_WriteMessage ( E_SL_MSG_AUTHENTICATE_DEVICE_RESPONSE,
                                u16Length,
-                               au8LinkTxBuffer );
+                               au8LinkTxBuffer,
+                               0 );
         }
         switch (sZllState.eNodeState)
         {
@@ -443,7 +446,8 @@ PUBLIC void APP_vHandleAppEvents ( void )
                             ZNC_BUF_U8_UPD  ( &au8LinkTxBuffer [u16Length], sAppEvent.uEvent.sTouchLink.u8MacCap  , u16Length );
                             vSL_WriteMessage ( E_SL_MSG_DEVICE_ANNOUNCE,
                                                u16Length,
-                                               au8LinkTxBuffer );
+                                               au8LinkTxBuffer,
+                                               0 );
                         }
                     }
 
@@ -482,8 +486,11 @@ PUBLIC void APP_vHandleStackEvents ( ZPS_tsAfEvent*    psStackEvent )
     tsBDB_ZCLEvent         sBdbEvent;
     tsZCL_CallBackEvent    sCallBackEvent;
     uint8                  au8LinkTxBuffer[256];
+    uint8 				   u8LinkQuality;
 
     vLog_Printf ( TRACE_APP,LOG_DEBUG, "Got stack event %d\n", psStackEvent->eType);
+
+    u8LinkQuality=psStackEvent->uEvent.sApsDataIndEvent.u8LinkQuality;
 
     switch (psStackEvent->eType)
     {
@@ -534,7 +541,8 @@ PUBLIC void APP_vHandleStackEvents ( ZPS_tsAfEvent*    psStackEvent )
 
                 vSL_WriteMessage ( E_SL_MSG_DATA_INDICATION,
                                    u16Length,
-                                   au8LinkTxBuffer );
+                                   au8LinkTxBuffer,
+                                   u8LinkQuality );
                 vLog_Printf ( TRACE_APP,LOG_ERR, "NPDU: Current %d Max %d\n", PDUM_u8GetNpduUse(), PDUM_u8GetMaxNpduUse() );
                 vLog_Printf ( TRACE_APP,LOG_ERR, "APDU: Current %d Max %d\n", u8GetApduUse(), u8GetMaxApdu( ) );
 
@@ -559,7 +567,8 @@ PUBLIC void APP_vHandleStackEvents ( ZPS_tsAfEvent*    psStackEvent )
 
                         vSL_WriteMessage ( E_SL_MSG_DEVICE_ANNOUNCE,
                                            u16Length,
-                                           au8LinkTxBuffer );
+                                           au8LinkTxBuffer,
+                                           u8LinkQuality );
                     }
                         break;
 
@@ -583,7 +592,8 @@ PUBLIC void APP_vHandleStackEvents ( ZPS_tsAfEvent*    psStackEvent )
 
                         vSL_WriteMessage ( E_SL_MSG_COMPLEX_DESCRIPTOR_RESPONSE,
                                            u16Length,
-                                           au8LinkTxBuffer );
+                                           au8LinkTxBuffer,
+                                           u8LinkQuality );
                     }
                         break;
 
@@ -602,7 +612,8 @@ PUBLIC void APP_vHandleStackEvents ( ZPS_tsAfEvent*    psStackEvent )
 
                         vSL_WriteMessage ( E_SL_MSG_NODE_DESCRIPTOR_RESPONSE,
                                            u16Length,
-                                           au8LinkTxBuffer );
+                                           au8LinkTxBuffer,
+                                           u8LinkQuality );
                     }
                         break;
 
@@ -624,7 +635,8 @@ PUBLIC void APP_vHandleStackEvents ( ZPS_tsAfEvent*    psStackEvent )
 
                         vSL_WriteMessage ( E_SL_MSG_MATCH_DESCRIPTOR_RESPONSE,
                                            u16Length,
-                                           au8LinkTxBuffer );
+                                           au8LinkTxBuffer,
+                                           u8LinkQuality );
                     }
                         break;
 
@@ -656,7 +668,8 @@ PUBLIC void APP_vHandleStackEvents ( ZPS_tsAfEvent*    psStackEvent )
                         }
                         vSL_WriteMessage ( E_SL_MSG_SIMPLE_DESCRIPTOR_RESPONSE,
                                            u16Length,
-                                           au8LinkTxBuffer );
+                                           au8LinkTxBuffer,
+                                           u8LinkQuality );
                     }
                         break;
 
@@ -682,13 +695,15 @@ PUBLIC void APP_vHandleStackEvents ( ZPS_tsAfEvent*    psStackEvent )
                         {
                             vSL_WriteMessage ( E_SL_MSG_NETWORK_ADDRESS_RESPONSE,
                                                u16Length,
-                                               au8LinkTxBuffer );
+                                               au8LinkTxBuffer,
+                                               u8LinkQuality );
                         }
                         else
                         {
                             vSL_WriteMessage ( E_SL_MSG_IEEE_ADDRESS_RESPONSE,
                                                u16Length,
-                                               au8LinkTxBuffer );
+                                               au8LinkTxBuffer,
+                                               u8LinkQuality );
 
                         }
                     }
@@ -699,7 +714,8 @@ PUBLIC void APP_vHandleStackEvents ( ZPS_tsAfEvent*    psStackEvent )
                         ZNC_BUF_U8_UPD   ( &au8LinkTxBuffer [u16Length] , sApsZdpEvent.uZdpData.sMgmtLeaveRsp.u8Status,    u16Length );
                         vSL_WriteMessage ( E_SL_MSG_MANAGEMENT_LEAVE_RESPONSE,
                                            u16Length,
-                                           au8LinkTxBuffer );
+                                           au8LinkTxBuffer,
+                                           u8LinkQuality );
                     }
                     break;
 
@@ -730,7 +746,8 @@ PUBLIC void APP_vHandleStackEvents ( ZPS_tsAfEvent*    psStackEvent )
                         }
                         vSL_WriteMessage ( E_SL_MSG_MANAGEMENT_LQI_RESPONSE,
                                            u16Length,
-                                           au8LinkTxBuffer );
+                                           au8LinkTxBuffer,
+                                           u8LinkQuality );
                     }
                     break;
 
@@ -740,7 +757,8 @@ PUBLIC void APP_vHandleStackEvents ( ZPS_tsAfEvent*    psStackEvent )
                         ZNC_BUF_U16_UPD  ( &au8LinkTxBuffer [u16Length] , sApsZdpEvent.uZdpData.sPowerDescRsp.sPowerDescriptor.uBitUnion.u16Value,    u16Length );
                         vSL_WriteMessage ( E_SL_MSG_POWER_DESCRIPTOR_RESPONSE,
                                            u16Length,
-                                           au8LinkTxBuffer);
+                                           au8LinkTxBuffer,
+                                           u8LinkQuality );
                     }
                     break;
 
@@ -762,7 +780,8 @@ PUBLIC void APP_vHandleStackEvents ( ZPS_tsAfEvent*    psStackEvent )
                         }
                         vSL_WriteMessage ( E_SL_MSG_ACTIVE_ENDPOINT_RESPONSE,
                                            u16Length,
-                                           au8LinkTxBuffer );
+                                           au8LinkTxBuffer,
+                                           u8LinkQuality );
                     }
                     break;
 
@@ -784,7 +803,8 @@ PUBLIC void APP_vHandleStackEvents ( ZPS_tsAfEvent*    psStackEvent )
                         }
                         vSL_WriteMessage ( E_SL_MSG_MANAGEMENT_NETWORK_UPDATE_RESPONSE,
                                            u16Length,
-                                           au8LinkTxBuffer );
+                                           au8LinkTxBuffer,
+                                           u8LinkQuality );
                     }
                     break;
 
@@ -795,7 +815,8 @@ PUBLIC void APP_vHandleStackEvents ( ZPS_tsAfEvent*    psStackEvent )
 
                          vSL_WriteMessage ( E_SL_MSG_SYSTEM_SERVER_DISCOVERY_RESPONSE,
                                             u16Length,
-                                            au8LinkTxBuffer );
+                                            au8LinkTxBuffer,
+                                            u8LinkQuality );
                     }
                     break;
 
@@ -814,7 +835,8 @@ PUBLIC void APP_vHandleStackEvents ( ZPS_tsAfEvent*    psStackEvent )
                         }
                         vSL_WriteMessage ( E_SL_MSG_USER_DESC_RSP,
                                             u16Length,
-                                            au8LinkTxBuffer );
+                                            au8LinkTxBuffer,
+                                            u8LinkQuality );
                     }
                     break;
 
@@ -825,7 +847,8 @@ PUBLIC void APP_vHandleStackEvents ( ZPS_tsAfEvent*    psStackEvent )
 
                         vSL_WriteMessage ( E_SL_MSG_USER_DESC_NOTIFY,
                                             u16Length,
-                                            au8LinkTxBuffer );
+                                            au8LinkTxBuffer,
+                                            u8LinkQuality );
                     }
                     break;
 
@@ -837,24 +860,28 @@ PUBLIC void APP_vHandleStackEvents ( ZPS_tsAfEvent*    psStackEvent )
                              case ZPS_ZDP_BIND_RSP_CLUSTER_ID:
                                  vSL_WriteMessage ( E_SL_MSG_BIND_RESPONSE,
                                                     u16Length,
-                                                    au8LinkTxBuffer );
+                                                    au8LinkTxBuffer,
+                                                    u8LinkQuality );
                              break;
 
                              case ZPS_ZDP_UNBIND_RSP_CLUSTER_ID:
                                  vSL_WriteMessage ( E_SL_MSG_UNBIND_RESPONSE,
                                                     u16Length,
-                                                    au8LinkTxBuffer );
+                                                    au8LinkTxBuffer,
+                                                    u8LinkQuality );
                              break;
                              case ZPS_ZDP_MGMT_LEAVE_RSP_CLUSTER_ID:
                                  vSL_WriteMessage ( E_SL_MSG_MANAGEMENT_LEAVE_RESPONSE,
                                                     u16Length,
-                                                    au8LinkTxBuffer );
+                                                    au8LinkTxBuffer,
+                                                    u8LinkQuality );
                              break;
 
                              case ZPS_ZDP_MGMT_PERMIT_JOINING_RSP_CLUSTER_ID:
                                  vSL_WriteMessage ( E_SL_MSG_PERMIT_JOINING_RESPONSE,
                                                     u16Length,
-                                                    au8LinkTxBuffer );
+                                                    au8LinkTxBuffer,
+                                                    u8LinkQuality );
                              break;
                              default:
                              break;
@@ -883,7 +910,8 @@ PUBLIC void APP_vHandleStackEvents ( ZPS_tsAfEvent*    psStackEvent )
             ZNC_BUF_U8_UPD   ( &au8LinkTxBuffer [u16Length], psStackEvent->uEvent.sNwkRouteDiscoveryConfirmEvent.u8NwkStatus,    u16Length );
             vSL_WriteMessage ( E_SL_MSG_ROUTE_DISCOVERY_CONFIRM,
                                    u16Length,
-                                   au8LinkTxBuffer );
+                                   au8LinkTxBuffer,
+                                   u8LinkQuality );
         break;
 
         case ZPS_EVENT_NWK_STATUS_INDICATION:
@@ -986,7 +1014,8 @@ PUBLIC void APP_vHandleStackEvents ( ZPS_tsAfEvent*    psStackEvent )
 
                      vSL_WriteMessage ( E_SL_MSG_LEAVE_INDICATION,
                                         u16Length,
-                                        au8LinkTxBuffer );
+                                        au8LinkTxBuffer,
+                                        u8LinkQuality );
                 }
             }
             break;
@@ -1318,6 +1347,9 @@ PUBLIC void Znc_vSendDataIndicationToHost ( ZPS_tsAfEvent*    psStackEvent,
     uint16    i         =  0;
     uint8*    dataPtr   =  ( uint8* ) PDUM_pvAPduInstanceGetPayload ( psStackEvent->uEvent.sApsDataIndEvent.hAPduInst );
     uint8     u8Size    =  PDUM_u16APduInstanceGetPayloadSize( psStackEvent->uEvent.sApsDataIndEvent.hAPduInst);
+    uint8     u8LinkQuality;
+
+    u8LinkQuality = psStackEvent->uEvent.sApsDataIndEvent.u8LinkQuality;
 
     ZNC_BUF_U8_UPD  ( &pau8LinkTxBuffer[u16Length] ,
                       psStackEvent->uEvent.sApsDataIndEvent.eStatus,
@@ -1377,7 +1409,8 @@ PUBLIC void Znc_vSendDataIndicationToHost ( ZPS_tsAfEvent*    psStackEvent,
 
     vSL_WriteMessage ( E_SL_MSG_DATA_INDICATION,
                        u16Length,
-                       pau8LinkTxBuffer );
+                       pau8LinkTxBuffer,
+                       u8LinkQuality );
 }
 /****************************************************************************/
 /***        END OF FILE                                                   ***/

@@ -352,10 +352,12 @@ PUBLIC void APP_vProcessIncomingSerialCommands ( uint8    u8RxByte )
                 ZNC_BUF_U16_UPD ( &au8values[ 2 ], u16PacketType, u8Length );
                 vSL_WriteMessage ( E_SL_MSG_STATUS,
                                    u8Length,
-                                   au8values );
+                                   au8values,
+                                   0 );
                 vSL_WriteMessage ( E_SL_MSG_VERSION_LIST,
                                    sizeof ( uint32 ),
-                                   ( uint8* ) &u32Version );
+                                   ( uint8* ) &u32Version,
+                                   0 );
                 return;
             }
             break;
@@ -1997,7 +1999,8 @@ PUBLIC void APP_vProcessIncomingSerialCommands ( uint8    u8RxByte )
                 vNetworkRecoveryObtainRecoverData ( &sNwkRecovery );
                 vSL_WriteMessage( E_SL_MSG_NWK_RECOVERY_EXTRACT_RSP,
                                   sizeof(sNwkRecovery),
-                                  (uint8 *)&sNwkRecovery );
+                                  (uint8 *)&sNwkRecovery,
+                                  0 );
             }
             break;
 
@@ -2007,7 +2010,8 @@ PUBLIC void APP_vProcessIncomingSerialCommands ( uint8    u8RxByte )
                 vNetworkRecoveryInsertRecoverData( ( tsNwkRecovery * ) &au8LinkRxBuffer );
                 vSL_WriteMessage( E_SL_MSG_NWK_RECOVERY_RESTORE_RSP,
                                   sizeof(uint8),
-                                  &u8Success );
+                                  &u8Success,
+                                  0 );
             }
             break;
 #endif
@@ -2207,7 +2211,8 @@ PUBLIC void APP_vProcessIncomingSerialCommands ( uint8    u8RxByte )
         ZNC_BUF_U16_UPD ( &au8values [ 2 ], u16PacketType, u8Length );
         vSL_WriteMessage ( E_SL_MSG_STATUS,
                            u8Length,
-                           au8values );
+                           au8values,
+                           0 );
 
     }
 
@@ -2956,7 +2961,8 @@ PRIVATE void APP_vControlNodeScanStart(void)
                 au8Buffer[0] =  u8Status;
                 vSL_WriteMessage ( E_SL_MSG_NETWORK_JOINED_FORMED,
                                    sizeof(uint8)  ,
-                                   au8Buffer );
+                                   au8Buffer,
+                                   0 );
             }
             return;
         }
@@ -3019,7 +3025,8 @@ PRIVATE void APP_vControlNodeStartNetwork(void)
                 au8Buffer[0] =  u8Status;
                 vSL_WriteMessage ( E_SL_MSG_NETWORK_JOINED_FORMED,
                                    sizeof(uint8)  ,
-                                   au8Buffer );
+                                   au8Buffer,
+                                   0 );
             }
         }
 #ifdef FULL_FUNC_DEVICE
@@ -3312,7 +3319,8 @@ PUBLIC void APP_vSendJoinedFormEventToHost ( uint8    u8FormJoin,
     APP_vSaveAllRecords();
     vSL_WriteMessage ( E_SL_MSG_NETWORK_JOINED_FORMED,
                        ( sizeof(uint8) + sizeof(uint16) + sizeof(uint64) + sizeof(uint8) ),
-                       pu8Buffer );
+                       pu8Buffer,
+                       0 );
     ZTIMER_eStart ( u8TmrToggleLED, s_sLedState.u32LedToggleTime );
 
     /* Initialise the OTA  */
@@ -3620,7 +3628,8 @@ PUBLIC void APP_vIdentifyEffect ( void* pvParam )
     ZTIMER_eStart( u8IdTimer, ZTIMER_TIME_MSEC (u16IdentifyTime));
     vSL_WriteMessage ( E_SL_MSG_IDENTIFY_LOCAL_ACTIVE,
                        sizeof(uint8),
-                       &u8Status );
+                       &u8Status,
+                       0 );
 }
 
 /****************************************************************************
@@ -3646,7 +3655,8 @@ PUBLIC void APP_vIdentifyEffectEnd ( void* pvParam )
     {
         vSL_WriteMessage ( E_SL_MSG_IDENTIFY_LOCAL_ACTIVE,
                            sizeof(uint8),
-                           &u8Status );
+                           &u8Status,
+                           0 );
     }
 }
 /****************************************************************************
