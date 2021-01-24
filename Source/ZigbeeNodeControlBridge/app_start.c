@@ -913,6 +913,7 @@ PUBLIC void app_vFormatAndSendUpdateLists ( void )
     /* Cluster list endpoint HA */
     ZNC_BUF_U8_UPD  ( &au8LinkTxBuffer [ 0 ],            ZIGBEENODECONTROLBRIDGE_ZLO_ENDPOINT,    u16Length );
     ZNC_BUF_U16_UPD ( &au8LinkTxBuffer [ u16Length ],    0x0104,                                  u16Length );
+    ZNC_BUF_U8_UPD  ( &au8LinkTxBuffer [ u16Length ], ( sizeof ( u16ClusterListHA ) /  sizeof( u16ClusterListHA [ 0 ] ) ), u16Length );
     while ( u8BufferLoop < ( sizeof ( u16ClusterListHA ) /  sizeof( u16ClusterListHA [ 0 ] ) ) )
     {
         ZNC_BUF_U16_UPD ( &au8LinkTxBuffer [ u16Length ],    u16ClusterListHA [ u8BufferLoop ],    u16Length );
@@ -927,6 +928,7 @@ PUBLIC void app_vFormatAndSendUpdateLists ( void )
     u16Length = u8BufferLoop =  0;
     ZNC_BUF_U8_UPD  ( &au8LinkTxBuffer [ 0 ],         ZIGBEENODECONTROLBRIDGE_ZLO_ENDPOINT,    u16Length );
     ZNC_BUF_U16_UPD ( &au8LinkTxBuffer [ u16Length ], 0x0104,                                  u16Length );
+    ZNC_BUF_U8_UPD  ( &au8LinkTxBuffer [ u16Length ], ( sizeof ( u16ClusterListHA2 ) /  sizeof( u16ClusterListHA2 [ 0 ] ) ), u16Length );
     while ( u8BufferLoop <  ( sizeof ( u16ClusterListHA2 ) /  sizeof ( u16ClusterListHA2 [ 0 ] ) )  )
     {
 
@@ -946,6 +948,7 @@ PUBLIC void app_vFormatAndSendUpdateLists ( void )
         ZNC_BUF_U8_UPD  ( &au8LinkTxBuffer [ 0 ],            ZIGBEENODECONTROLBRIDGE_ZLO_ENDPOINT,     u16Length );
         ZNC_BUF_U16_UPD ( &au8LinkTxBuffer [ u16Length ],    0x0104,                                   u16Length );
         ZNC_BUF_U16_UPD ( &au8LinkTxBuffer [ u16Length ],    asAttribCommand[u8Count].u16Clusterid,    u16Length );
+        ZNC_BUF_U8_UPD  ( &au8LinkTxBuffer [ u16Length ],    asAttribCommand [ u8Count ].u32Asize,     u16Length );
         while ( u8BufferLoop <   asAttribCommand [ u8Count ].u32Asize   )
         {
             ZNC_BUF_U16_UPD ( &au8LinkTxBuffer [ u16Length ],    asAttribCommand[u8Count].au16Attibutes [ u8BufferLoop ],    u16Length );
@@ -960,6 +963,7 @@ PUBLIC void app_vFormatAndSendUpdateLists ( void )
         ZNC_BUF_U8_UPD  ( &au8LinkTxBuffer [ 0 ],            ZIGBEENODECONTROLBRIDGE_ZLO_ENDPOINT,     u16Length );
         ZNC_BUF_U16_UPD ( &au8LinkTxBuffer [ u16Length ],    0x0104,                                   u16Length );
         ZNC_BUF_U16_UPD ( &au8LinkTxBuffer [ u16Length ],    asAttribCommand[u8Count].u16Clusterid,    u16Length );
+        ZNC_BUF_U8_UPD  ( &au8LinkTxBuffer [ u16Length ],    asAttribCommand [ u8Count ].u32Csize,     u16Length );
         while ( u8BufferLoop <   asAttribCommand [ u8Count ].u32Csize  )
         {
             ZNC_BUF_U8_UPD ( &au8LinkTxBuffer [ u16Length ],    asAttribCommand[u8Count].au8command [ u8BufferLoop ],    u16Length );
@@ -975,7 +979,16 @@ PUBLIC void app_vFormatAndSendUpdateLists ( void )
 
 void vfExtendedStatusCallBack ( ZPS_teExtendedStatus    eExtendedStatus )
 {
+    uint16                 u16Length =  0;
+    uint8                  au8LinkTxBuffer[256];
     vLog_Printf ( TRACE_EXC,LOG_DEBUG, "ERROR: Extended status %x\n", eExtendedStatus );
+
+    u16Length =  0;
+    ZNC_BUF_U8_UPD  ( &au8LinkTxBuffer [ 0 ],  eExtendedStatus,     u16Length );
+    vSL_WriteMessage ( 0x9999,
+                       u16Length,
+                       au8LinkTxBuffer,
+                       0);
 }
 
 #if (defined PDM_EEPROM)
