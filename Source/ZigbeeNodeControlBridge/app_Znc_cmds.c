@@ -2215,8 +2215,8 @@ PUBLIC void APP_vProcessIncomingSerialCommands ( uint8    u8RxByte )
                            0 );
 
         #if DEBUG_PDUM
-            vLog_Printf ( TRACE_APP,LOG_ERR, "NPDU: Current %d Max %d\n", PDUM_u8GetNpduUse(), PDUM_u8GetMaxNpduUse() );
-            vLog_Printf ( TRACE_APP,LOG_ERR, "APDU: Current %d Max %d\n", u8GetApduUse(), u8GetMaxApdu( ) );
+            vLog_Printf ( TRACE_APP,LOG_DEBUG, "NPDU: Current %d Max %d\n", PDUM_u8GetNpduUse(), PDUM_u8GetMaxNpduUse() );
+            vLog_Printf ( TRACE_APP,LOG_DEBUG, "APDU: Current %d Max %d\n", u8GetApduUse(), u8GetMaxApdu( ) );
         #endif
     }
 
