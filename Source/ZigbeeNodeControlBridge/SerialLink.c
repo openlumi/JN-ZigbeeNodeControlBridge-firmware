@@ -322,6 +322,10 @@ PUBLIC void vSL_LogSend(void)
         {
             u8CRC ^= au8LogBuffer[(u8LogStart + u8Length) & 0xFF];
         }
+
+        // LQI
+        u8CRC ^= 0; u8Length++;
+
         u8CRC ^= 0;
         u8CRC ^= u8Length;
 
@@ -332,6 +336,7 @@ PUBLIC void vSL_LogSend(void)
         /* Send message checksum */
         vSL_TxByte(FALSE, u8CRC);
 
+        u8Length--;
         /* Send message payload */
         for(n = 0; n < u8Length; n++)
         {
@@ -340,6 +345,7 @@ PUBLIC void vSL_LogSend(void)
         }
         u8LogStart++;
 
+        vSL_TxByte(FALSE, 0);
         /* Send end character */
         vSL_TxByte(TRUE, SL_END_CHAR);
     }
