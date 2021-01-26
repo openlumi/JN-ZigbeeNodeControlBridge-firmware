@@ -126,6 +126,9 @@
 #define LED_DIO_PINS                                             ( LED1_DIO_PIN |\
                                                                    LED2_DIO_PIN )
 
+#ifndef ENABLING_HIGH_POWER_MODE
+#define ENABLING_HIGH_POWER_MODE                                  FALSE
+#endif
 #endif
 
 #if (JENNIC_CHIP_FAMILY == JN517x)
@@ -324,6 +327,17 @@ PUBLIC void vAppMain(void)
 
 #if (JENNIC_CHIP_FAMILY == JN516x)
     vAHI_WatchdogException ( TRUE );
+#if (ENABLING_HIGH_POWER_MODE == TRUE)
+    /* After testing on Xiaomi DGNWG05LM and Aqara ZHWG11LM devices, it was
+     * decided to use the deprecated vAppApiSetHighPowerMode method for use on
+     * JN5168 instead of the new vAHI_ModuleConfigure method for use on JN5169.
+     * I checked the following options:
+     * - vAHI_ModuleConfigure(E_MODULE_DEFAULT) does not work on Aqara
+     * - vAHI_ModuleConfigure(E_MODULE_JN5169_001_M06_FCC) low signal on Xiaomi
+     * - vAppApiSetHighPowerMode (APP_API_MODULE_HPM05, TRUE) works well both on
+     * Xiaomi and Aqara */
+    vAppApiSetHighPowerMode(APP_API_MODULE_HPM05, TRUE);
+#endif
 #else
     vAHI_WatchdogException ( TRUE , vWatchdogHandler );
 #endif
