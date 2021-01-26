@@ -333,6 +333,8 @@ PUBLIC void vAppMain(void)
      * JN5168 instead of the new vAHI_ModuleConfigure method for use on JN5169.
      * I checked the following options:
      * - vAHI_ModuleConfigure(E_MODULE_DEFAULT) does not work on Aqara
+     * - vAHI_ModuleConfigure(E_MODULE_JN5169_001_M03_ETSI) does not work on
+     * Aqara
      * - vAHI_ModuleConfigure(E_MODULE_JN5169_001_M06_FCC) low signal on Xiaomi
      * - vAppApiSetHighPowerMode (APP_API_MODULE_HPM05, TRUE) works well both on
      * Xiaomi and Aqara */
