@@ -103,6 +103,14 @@ endif
 JENNIC_STACK           ?= ZCL
 
 ###############################################################################
+# Enabling High Power Mode on the Modules
+# to support the zigbee module installed in the Aqara ZHWG11LM device
+
+ifeq ($(JENNIC_CHIP_FAMILY),JN516x)
+CFLAGS  += -DENABLING_HIGH_POWER_MODE
+endif
+
+###############################################################################
 # commands options
 # enable optional commands as required per applicaion.
 #
