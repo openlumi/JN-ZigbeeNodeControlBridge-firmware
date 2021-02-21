@@ -75,6 +75,7 @@ MINIMUM_HEAP_SIZE       = 2000
 
 NODE                   ?= COORDINATOR
 GP_SUPPORT			   ?= 1
+OTA                    ?= 1
 
 CRC_NEW                ?= CRC_XOR
 #CRC_NEW                ?= CCITT_CRC
@@ -139,12 +140,17 @@ endif
 ifeq ($(DEBUG), LOG)
 CFLAGS  += -DDEBUG_ZCL
 CFLAGS	+= -DDEBUG_ZB_CONTROLBRIDGE_TASK
-CFLAGS	+= -DDEBUG_PDUM
-CFLAGS  += -DDEBUG_APP_OTA
+#CFLAGS	+= -DDEBUG_PDUM
 
+ifeq ($(OTA), 1)
+#CFLAGS  += -DDEBUG_APP_OTA
+endif
+
+
+ifeq ($(GP_SUPPORT), 1)
 CFLAGS += -DDEBUG_APP_GP
 CFLAGS += -DTRACE_GP_DEBUG
-
+endif
 #CFLAGS += -DDEBUG_SERIAL_LINK
 endif
 
@@ -156,8 +162,10 @@ CFLAGS  += -DUART_DEBUGGING
 CFLAGS  += -DDEBUG_ZCL
 CFLAGS	+= -DDEBUG_ZB_CONTROLBRIDGE_TASK
 CFLAGS	+= -DDEBUG_PDUM
-CFLAGS  += -DDEBUG_APP_OTA
 
+ifeq ($(OTA), 1)
+CFLAGS  += -DDEBUG_APP_OTA
+endif
 
 CFLAGS += -DDEBUG_APP_GP
 CFLAGS += -DTRACE_GP_DEBUG
@@ -245,7 +253,11 @@ APPSRC += app_start.c
 APPSRC += SerialLink.c
 APPSRC += uart.c
 APPSRC += pdum_apdu.S
+
+ifeq ($(OTA), 1)
+CFLAGS	+= -DCLD_OTA
 APPSRC += app_ota_server.c
+endif
 ifeq ($(JENNIC_CHIP_FAMILY),JN517x)
 APPSRC += AHI_ModuleConfiguration.c
 endif
@@ -265,6 +277,8 @@ endif
 ifeq ($(GP_SUPPORT), 1)
 APPSRC += app_green_power.c
 endif
+
+APPSRC += appZpsExtendedDebug.c
 
 LIBNAME = $(TARGET)_PDM$(PDM_BUILD_TYPE)_BAUD_$(BAUD)_DEBUG_$(DEBUG)
 
@@ -300,7 +314,9 @@ APP_CLUSTERS_HVAC_SRC                       ?= 1
 APP_CLUSTERS_IAS_SRC                        ?= 1
 APP_CLUSTERS_SMART_ENERGY_SRC               ?= 1
 APP_CLUSTERS_ENERGY_AT_HOME_SRC             ?= 1
+ifeq ($(OTA), 1)
 APP_CLUSTERS_OTA_SRC                        ?= 1
+endif
 APP_CLUSTER_LIGHTING_SRC                    ?= 1
 APP_CLUSTERS_APPLIANCE_MANAGEMENT_SRC       ?= 1
 APP_CLUSTERS_CLOSURES_SRC                   ?= 1

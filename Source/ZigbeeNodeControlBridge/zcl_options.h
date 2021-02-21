@@ -145,7 +145,9 @@
 #define CLD_DIAGNOSTICS_ATTR_ID_LAST_MESSAGE_LQI
 #define CLD_DIAGNOSTICS_ATTR_ID_LAST_MESSAGE_RSSI
 
-#define CLD_OTA
+
+#ifdef CLD_OTA
+//#define CLD_OTA
 #define OTA_SERVER
 #define OTA_MAX_BLOCK_SIZE                                    64
 #define OTA_TIME_INTERVAL_BETWEEN_RETRIES                     5
@@ -153,6 +155,7 @@
 #define OTA_MAX_IMAGES_PER_ENDPOINT                           1
 #define OTA_CLD_ATTR_CURRENT_FILE_VERSION
 #define OTA_MAX_CO_PROCESSOR_IMAGES                           1
+#endif
 
 #define NUM_ENDPOINT_RECORDS                                  10
 #define NUM_GROUP_RECORDS                                     4
