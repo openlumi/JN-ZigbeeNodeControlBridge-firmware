@@ -1017,6 +1017,8 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
                 {
                     case E_CLD_IASZONE_CMD_ZONE_ENROLL_REQUEST:
                     {
+                    	ZPS_tsAfEvent* psStackEvent = psEvent->pZPSevent;
+                    	Znc_vSendDataIndicationToHost(psStackEvent, au8LinkTxBuffer);
                     }
                     break;
 

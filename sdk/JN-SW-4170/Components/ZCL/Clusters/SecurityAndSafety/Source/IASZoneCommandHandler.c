@@ -4,7 +4,7 @@
  *
  * COMPONENT:          $ $
  *
- * AUTHOR:             
+ * AUTHOR:
  *
  * VERSION:            $ $
  *
@@ -12,7 +12,7 @@
  *
  * DATED:              $ $
  *
- * STATUS:             $ $ 
+ * STATUS:             $ $
  *
  * DESCRIPTION:
  * Message event handler functions
@@ -26,21 +26,21 @@
  * under applicable copyright laws. All rights are reserved. We grant You,
  * and any third parties, a license to use this software solely and
  * exclusively on NXP products [NXP Microcontrollers such as JN5168, JN5164,
- * JN5161, JN5148, JN5142, JN5139]. 
- * You, and any third parties must reproduce the copyright and warranty notice 
+ * JN5161, JN5148, JN5142, JN5139].
+ * You, and any third parties must reproduce the copyright and warranty notice
  * and any other legend of ownership on each  copy or partial copy of the software.
  *
- *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"  
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE 
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
- * POSSIBILITY OF SUCH DAMAGE. 
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  *
  * Copyright NXP B.V. 2012. All rights reserved
  *
@@ -101,14 +101,14 @@ PRIVATE teZCL_Status eCLD_IASZoneHandleInitiateTestModeRequest(
         tsZCL_EndPointDefinition    *psEndPointDefinition,
         tsZCL_ClusterInstance       *psClusterInstance,
         uint8                        u8CommandId);
-#endif        
 #endif
-#ifdef IASZONE_CLIENT        
+#endif
+#ifdef IASZONE_CLIENT
 PRIVATE teZCL_Status eCLD_IASZoneHandleZoneEnrollRequest(
         ZPS_tsAfEvent               *pZPSevent,
         tsZCL_EndPointDefinition    *psEndPointDefinition,
         tsZCL_ClusterInstance       *psClusterInstance,
-        uint8                        u8CommandId); 
+        uint8                        u8CommandId);
 PRIVATE teZCL_Status eCLD_IASZoneHandleZoneStatusChangeNotification(
         ZPS_tsAfEvent               *pZPSevent,
         tsZCL_EndPointDefinition    *psEndPointDefinition,
@@ -176,7 +176,7 @@ PUBLIC teZCL_Status eCLD_IASZoneCommandHandler(
 
     /* Fill in message */
     psCommon->sCallBackMessage.u8CommandId = sZCL_HeaderParams.u8CommandIdentifier;
-    
+
 #ifdef IASZONE_SERVER
     /* Handle messages appropriate for the cluster type (Client/Server) */
     if(psClusterInstance->bIsServer)
@@ -195,7 +195,7 @@ PUBLIC teZCL_Status eCLD_IASZoneCommandHandler(
                 u64SrcIEEEAddress = (uint64)0xffffffffffffffffLL;
             }
         }
-        
+
         if(u64SrcIEEEAddress == psSharedStruct->u64IASCIEAddress )
         {
             // SERVER
@@ -205,14 +205,14 @@ PUBLIC teZCL_Status eCLD_IASZoneCommandHandler(
                 case E_CLD_IASZONE_CMD_ZONE_ENROLL_RESP:
                     eStatus = eCLD_IASZoneHandleZoneEnrollResp(pZPSevent, psEndPointDefinition, psClusterInstance, sZCL_HeaderParams.u8CommandIdentifier);
                 break;
-                
+
                 #ifdef CLD_IASZONE_CMD_INITIATE_NORMAL_OPERATION_MODE
                     case E_CLD_IASZONE_CMD_INITIATE_NORMAL_OPERATION_MODE:
                         eStatus = eCLD_IASZoneHandleInitiateNormalModeOpRequest(pZPSevent, psEndPointDefinition, psClusterInstance, sZCL_HeaderParams.u8CommandIdentifier);
                     break;
                 #endif
-    
-                #ifdef  CLD_IASZONE_CMD_INITIATE_TEST_MODE   
+
+                #ifdef  CLD_IASZONE_CMD_INITIATE_TEST_MODE
                     case E_CLD_IASZONE_CMD_INITIATE_TEST_MODE:
                         eStatus = eCLD_IASZoneHandleInitiateTestModeRequest(pZPSevent, psEndPointDefinition, psClusterInstance, sZCL_HeaderParams.u8CommandIdentifier);
                     break;
@@ -227,7 +227,7 @@ PUBLIC teZCL_Status eCLD_IASZoneCommandHandler(
                     /*As the command handler for this command is available but it does NOT handle the commands hence return */
                     return(E_ZCL_ERR_CUSTOM_COMMAND_HANDLER_NULL_OR_RETURNED_ERROR);
                 break;
-            }    
+            }
 
         }
 
@@ -263,7 +263,7 @@ PUBLIC teZCL_Status eCLD_IASZoneCommandHandler(
         }
     }
 #endif
-    
+
     /* Added the check to make sure the default reponse with status success is centralized */
     if((eStatus == E_ZCL_SUCCESS) && !(sZCL_HeaderParams.bDisableDefaultResponse))
         eZCL_SendDefaultResponse(pZPSevent, E_ZCL_CMDS_SUCCESS);
@@ -331,14 +331,14 @@ PRIVATE teZCL_Status eCLD_IASZoneHandleZoneEnrollResp(
     psCommon->sCallBackMessage.uMessage.psZoneEnrollResponsePayload = &sPayload;
 
     /* call callback */
-    psEndPointDefinition->pCallBackFunctions(&psCommon->sCustomCallBackEvent);  
-    
+    psEndPointDefinition->pCallBackFunctions(&psCommon->sCustomCallBackEvent);
+
     /* Update the attributes if the response code is success */
     if (!sPayload.e8EnrollResponseCode)
     {
         eCLD_IASZoneUpdateZoneState(psEndPointDefinition->u8EndPointNumber,E_CLD_IASZONE_STATE_ENROLLED);
         eCLD_IASZoneUpdateZoneID(psEndPointDefinition->u8EndPointNumber,sPayload.u8ZoneID);
-    }    
+    }
     return E_ZCL_SUCCESS;
 }
 
@@ -386,11 +386,11 @@ PRIVATE teZCL_Status eCLD_IASZoneHandleInitiateNormalModeOpRequest(
     }
 
     /* call callback */
-    psEndPointDefinition->pCallBackFunctions(&psCommon->sCustomCallBackEvent);  
-    
+    psEndPointDefinition->pCallBackFunctions(&psCommon->sCustomCallBackEvent);
+
     eCLD_IASZoneUpdateZoneStatus(psEndPointDefinition->u8EndPointNumber,CLD_IASZONE_STATUS_MASK_TEST,CLD_IASZONE_STATUS_MASK_RESET);
     psCommon->sTestMode.u8TestModeDuration=0;
-    
+
     eStatus = eZCL_WriteLocalAttributeValue(
                      psEndPointDefinition->u8EndPointNumber,                   //uint8                      u8SrcEndpoint,
                      SECURITY_AND_SAFETY_CLUSTER_ID_IASZONE,                    //uint16                     u16ClusterId,
@@ -399,7 +399,7 @@ PRIVATE teZCL_Status eCLD_IASZoneHandleInitiateNormalModeOpRequest(
                      FALSE,                                                    //bool_t                     bIsClientAttribute,
                      E_CLD_IASZONE_ATTR_ID_CURRENT_ZONE_SENSITIVITY_LEVEL,     //uint16                     u16AttributeId,
                      &psCommon->sTestMode.u8CurrentZoneSensitivityLevel        //void                      *pvAttributeValue
-                     );   
+                     );
 
     return eStatus;
 }
@@ -454,12 +454,12 @@ PRIVATE teZCL_Status eCLD_IASZoneHandleInitiateTestModeRequest(
     psCommon->sCallBackMessage.uMessage.psZoneInitiateTestModeRequestPayload = &sPayload;
 
     /* call callback */
-    psEndPointDefinition->pCallBackFunctions(&psCommon->sCustomCallBackEvent);  
-    
+    psEndPointDefinition->pCallBackFunctions(&psCommon->sCustomCallBackEvent);
+
     eCLD_IASZoneUpdateZoneStatus(psEndPointDefinition->u8EndPointNumber,CLD_IASZONE_STATUS_MASK_TEST,CLD_IASZONE_STATUS_MASK_SET);
 
     psCommon->sTestMode.u8TestModeDuration = sPayload.u8TestModeDuration;
-    
+
     eStatus = eZCL_ReadLocalAttributeValue(
                      psEndPointDefinition->u8EndPointNumber,                   //uint8                      u8SrcEndpoint,
                      SECURITY_AND_SAFETY_CLUSTER_ID_IASZONE,                    //uint16                     u16ClusterId,
@@ -469,7 +469,7 @@ PRIVATE teZCL_Status eCLD_IASZoneHandleInitiateTestModeRequest(
                      E_CLD_IASZONE_ATTR_ID_CURRENT_ZONE_SENSITIVITY_LEVEL,     //uint16                     u16AttributeId,
                      &psCommon->sTestMode.u8CurrentZoneSensitivityLevel        //void                      *pvAttributeValue
                      );
-    
+
     eStatus = eZCL_WriteLocalAttributeValue(
                      psEndPointDefinition->u8EndPointNumber,                   //uint8                      u8SrcEndpoint,
                      SECURITY_AND_SAFETY_CLUSTER_ID_IASZONE,                    //uint16                     u16ClusterId,
@@ -479,7 +479,7 @@ PRIVATE teZCL_Status eCLD_IASZoneHandleInitiateTestModeRequest(
                      E_CLD_IASZONE_ATTR_ID_CURRENT_ZONE_SENSITIVITY_LEVEL,     //uint16                     u16AttributeId,
                      &sPayload.u8CurrentZoneSensitivityLevel                   //void                      *pvAttributeValue
                      );
-    
+
     return E_ZCL_SUCCESS;
 }
 #endif
@@ -535,7 +535,7 @@ PRIVATE teZCL_Status eCLD_IASZoneHandleZoneStatusChangeNotification(
     psCommon->sCallBackMessage.uMessage.psZoneStatusNotificationPayload = &sPayload;
 
     /* call callback */
-    psEndPointDefinition->pCallBackFunctions(&psCommon->sCustomCallBackEvent);  
+    psEndPointDefinition->pCallBackFunctions(&psCommon->sCustomCallBackEvent);
 
     return E_ZCL_SUCCESS;
 }
@@ -588,12 +588,16 @@ PRIVATE teZCL_Status eCLD_IASZoneHandleZoneEnrollRequest(
     /* Message data for callback */
     psCommon->sCallBackMessage.uMessage.sZoneEnrollRequestCallbackPayload.psZoneEnrollRequestPayload = &sPayload;
     psCommon->sCallBackMessage.uMessage.sZoneEnrollRequestCallbackPayload.sZoneEnrollResponsePayload.e8EnrollResponseCode = E_CLD_IASZONE_ENROLL_RESP_NOT_SUPPORTED;
-    psCommon->sCallBackMessage.uMessage.sZoneEnrollRequestCallbackPayload.sZoneEnrollResponsePayload.u8ZoneID = 0;
+    //psCommon->sCallBackMessage.uMessage.sZoneEnrollRequestCallbackPayload.sZoneEnrollResponsePayload.u8ZoneID = 0;
+    if (psCommon->sCallBackMessage.uMessage.sZoneEnrollRequestCallbackPayload.psZoneEnrollRequestPayload->u16ManufacturerCode == 0x120B) //HEIMAN
+    {
+        psCommon->sCallBackMessage.uMessage.sZoneEnrollRequestCallbackPayload.sZoneEnrollResponsePayload.u8ZoneID = 0x52;
+    }
     /* call callback */
-    psEndPointDefinition->pCallBackFunctions(&psCommon->sCustomCallBackEvent);  
-    
+    psEndPointDefinition->pCallBackFunctions(&psCommon->sCustomCallBackEvent);
+
     /*Send a response out */
-    
+
     // build address structure
     eZCL_BuildClientTransmitAddressStructure(&sZCL_Address, &psCommon->sReceiveEventAddress);
 
@@ -603,8 +607,8 @@ PRIVATE teZCL_Status eCLD_IASZoneHandleZoneEnrollRequest(
                                                      &u8TransactionSequenceNumber,
                                                      &(psCommon->sCallBackMessage.uMessage.sZoneEnrollRequestCallbackPayload.sZoneEnrollResponsePayload));
 
-    DBG_vPrintf(TRACE_IASZONE, " Send: %d", eStatus);    
-    
+    DBG_vPrintf(TRACE_IASZONE, " Send: %d", eStatus);
+
     return eStatus;
 }
 #endif
