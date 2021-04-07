@@ -199,7 +199,7 @@ PRIVATE void vAPP_DIOSetOutput(uint16 u16PacketLength, uint8 *pu8LinkRxBuffer, e
  ****************************************************************************/
 PRIVATE void vAPP_DIOSetReadInput(uint16 u16PacketLength, uint8 *pu8LinkRxBuffer, eAHI_Status *peAHIStatus)
 {
-    uint32 u32DioReadInput;
+   /// uint32 u32DioReadInput;
     *peAHIStatus = E_AHI_PARSE_ERROR;
 
     DBG_vPrintf(TRUE, "AHI: %s", __FUNCTION__);
@@ -207,7 +207,7 @@ PRIVATE void vAPP_DIOSetReadInput(uint16 u16PacketLength, uint8 *pu8LinkRxBuffer
     if (0 == u16PacketLength)
     {
         /* Read the input state */
-        u32DioReadInput = u32AHI_DioReadInput();
+     ///   u32DioReadInput = u32AHI_DioReadInput();
 
         /* Need to figure out how to send this data back as the success needs to be sent first
          * if I send the read input data back now, the status message will return after this

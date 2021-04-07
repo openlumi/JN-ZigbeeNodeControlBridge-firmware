@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<zpscfg:ZigbeeWirelessNetwork xmlns:zpscfg="http://www.nxp.com/zpscfg" DefaultExtendedPANId="0x0000000000000000" MaxNumberNodes="71" Version="1.1" DefaultSecurityEnabled="true">
+<zpscfg:ZigbeeWirelessNetwork xmlns:zpscfg="http://www.nxp.com/zpscfg" DefaultExtendedPANId="0x0000000000000000" MaxNumberNodes="40" Version="1.1" DefaultSecurityEnabled="true">
   <Profiles Name="ZDP" Id="0x0000">
     <Clusters Name="NWK_addr_req" Id="0x0000"/>
     <Clusters Name="IEEE_addr_req" Id="0x0001"/>
@@ -113,9 +113,14 @@
     <Clusters Name="Electrical_Measurements" Id="0x0B04"/>
     <Clusters Name="Diagnostics" Id="0x0B05"/>
     <Clusters Name="Default" Id="0xFFFF"/>
+    <Clusters Name="MultiStateInput" Id="0x0012"/>
+    <Clusters Name="MultiStateOutput" Id="0x0013"/>
+    <Clusters Name="BinaryInput" Id="0x000F"/>
+    <Clusters Name="XiaomiInformations" Id="0xFF01"/>
+    <Clusters Name="XiaomiInformations2" Id="0xFF02"/>
   </Profiles>
-  <Coordinator Name="ZigbeeNodeControlBridge" DiscoveryNeighbourTableSize="8" ActiveNeighbourTableSize="35" RouteDiscoveryTableSize="2" RoutingTableSize="71" BroadcastTransactionTableSize="14" RouteRecordTableSize="2" AddressMapTableSize="36" SecurityMaterialSets="2" MaxNumSimultaneousApsdeReq="5" MaxNumSimultaneousApsdeAckReq="3" MACMutexName="mutexMAC" ZPSMutexName="mutexZPS" FragmentationMaxNumSimulRx="3" FragmentationMaxNumSimulTx="3" DefaultEventMessageName="APP_msgZpsEvents" MACDcfmIndMessage="zps_msgDcfmInd" MACTimeEventMessage="zps_msgTimeEvents" apsNonMemberRadius="2" apsDesignatedCoordinator="true" apsUseInsecureJoin="false" apsMaxWindowSize="8" apsInterframeDelay="10" APSDuplicateTableSize="4" apsSecurityTimeoutPeriod="6000" apsUseExtPANId="0x0000000000000000" SecurityEnabled="true" MACMlmeDcfmIndMessage="zps_msgMlmeDcfmInd" MACMcpsDcfmIndMessage="zps_msgMcpsDcfmInd" APSPersistenceTime="100" NumAPSMESimulCommands="4" StackProfile="2" InterPAN="false" GreenPowerSupport="false" NwkFcSaveCountBitShift="10" ApsFcSaveCountBitShift="10" MacTableSize="71" DefaultCallbackName="APP_vGenCallback" PermitJoiningTime="0" ChildTableSize="35">
-    <Endpoints Id="0" Enabled="true" ApplicationDeviceId="0" ApplicationDeviceVersion="0" Profile="ZDP" Name="ZDO">
+  <Coordinator Name="ZigbeeNodeControlBridge" DiscoveryNeighbourTableSize="8" ActiveNeighbourTableSize="40" RouteDiscoveryTableSize="2" RoutingTableSize="70" BroadcastTransactionTableSize="9" RouteRecordTableSize="1" AddressMapTableSize="40" SecurityMaterialSets="1" MaxNumSimultaneousApsdeReq="5" MaxNumSimultaneousApsdeAckReq="3" MACMutexName="mutexMAC" ZPSMutexName="mutexZPS" FragmentationMaxNumSimulRx="3" FragmentationMaxNumSimulTx="3" DefaultEventMessageName="APP_msgZpsEvents" MACDcfmIndMessage="zps_msgDcfmInd" MACTimeEventMessage="zps_msgTimeEvents" apsNonMemberRadius="2" apsDesignatedCoordinator="true" apsUseInsecureJoin="true" apsMaxWindowSize="8" apsInterframeDelay="10" APSDuplicateTableSize="4" apsSecurityTimeoutPeriod="6000" apsUseExtPANId="0x0000000000000000" SecurityEnabled="true" MACMlmeDcfmIndMessage="zps_msgMlmeDcfmInd" MACMcpsDcfmIndMessage="zps_msgMcpsDcfmInd" APSPersistenceTime="100" NumAPSMESimulCommands="4" StackProfile="2" InterPAN="true" GreenPowerSupport="false" NwkFcSaveCountBitShift="10" ApsFcSaveCountBitShift="10" MacTableSize="40" DefaultCallbackName="APP_vGenCallback" PermitJoiningTime="0" ChildTableSize="40">
+    <Endpoints Id="0" Enabled="true" ApplicationDeviceId="0" ApplicationDeviceVersion="0" Profile="ZDP" Message="" Name="ZDO">
       <InputClusters Cluster="NWK_addr_req" RxAPDU="ZigbeeNodeControlBridge->apduZDP" Discoverable="true"/>
       <InputClusters Cluster="IEEE_addr_req" RxAPDU="ZigbeeNodeControlBridge->apduZDP" Discoverable="true"/>
       <InputClusters Cluster="Node_Desc_req" RxAPDU="ZigbeeNodeControlBridge->apduZDP" Discoverable="true"/>
@@ -314,6 +319,8 @@
       <InputClusters Cluster="Diagnostics" RxAPDU="ZigbeeNodeControlBridge->apduZDP" Discoverable="false"/>
       <InputClusters Cluster="ZLL_Commissioning" RxAPDU="ZigbeeNodeControlBridge->apduZDP" Discoverable="false"/>
       <InputClusters Cluster="Default" RxAPDU="ZigbeeNodeControlBridge->apduZDP" Discoverable="false"/>
+      <InputClusters Cluster="MultiStateInput" RxAPDU="ZigbeeNodeControlBridge->apduZDP" Discoverable="false"/>
+      <InputClusters Cluster="BinaryInput" RxAPDU="ZigbeeNodeControlBridge->apduZDP" Discoverable="true"/>
       <OutputClusters Cluster="ASC" TxAPDUs="ZigbeeNodeControlBridge->apduZDP" Discoverable="true"/>
       <OutputClusters Cluster="Basic" TxAPDUs="ZigbeeNodeControlBridge->apduZDP" Discoverable="true"/>
       <OutputClusters Cluster="Color_Control" TxAPDUs="ZigbeeNodeControlBridge->apduZDP" Discoverable="true"/>
@@ -336,20 +343,21 @@
       <OutputClusters Cluster="Thermostat_UI" TxAPDUs="ZigbeeNodeControlBridge->apduZDP" Discoverable="true"/>
       <OutputClusters Cluster="Power_Configuration" TxAPDUs="ZigbeeNodeControlBridge->apduZDP" Discoverable="true"/>
       <OutputClusters Cluster="Diagnostics" TxAPDUs="ZigbeeNodeControlBridge->apduZDP" Discoverable="true"/>
+      <OutputClusters Cluster="ZLL_Commissioning" TxAPDUs="ZigbeeNodeControlBridge->apduZDP" Discoverable="true"/>
     </Endpoints>
-    <PDUConfiguration NumNPDUs="25" PDUMMutexName="mutexPDUM">
-      <APDUs Id="ZigbeeNodeControlBridge->apduZDP" Name="apduZDP" Size="100" Instances="6"/>
+    <PDUConfiguration NumNPDUs="19" PDUMMutexName="mutexPDUM">
+      <APDUs Id="ZigbeeNodeControlBridge->apduZDP" Name="apduZDP" Size="100" Instances="4"/>
     </PDUConfiguration>
-    <ChannelMask Channel11="true" Channel12="false" Channel13="false" Channel14="false" Channel15="true" Channel16="false" Channel17="false" Channel18="false" Channel19="false" Channel20="true" Channel21="false" Channel22="false" Channel23="false" Channel24="false" Channel25="true" Channel26="false"/>
+    <ChannelMask Channel11="true" Channel12="false" Channel13="false" Channel14="false" Channel15="true" Channel16="false" Channel17="false" Channel18="false" Channel19="true" Channel20="true" Channel21="false" Channel22="false" Channel23="false" Channel24="false" Channel25="true" Channel26="false"/>
     <NodeDescriptor ManufacturerCode="4423" LogicalType="ZC" ComplexDescriptorAvailable="false" UserDescriptorAvailable="false" APSFlags="0" FrequencyBand="2.4GHz" AlternatePANCoordinator="true" DeviceType="true" PowerSource="true" RxOnWhenIdle="true" Security="false" AllocateAddress="true" MaximumBufferSize="127" MaximumIncomingTransferSize="0" MaximumOutgoingTransferSize="0" ExtendedActiveEndpointListAvailable="false" ExtendedSimpleDescriptorListAvailable="false" PrimaryTrustCenter="true" BackupTrustCenter="false" PrimaryBindingTableCache="false" BackupBindingTableCache="false" PrimaryDiscoveryCache="false" BackupDiscoveryCache="false" NetworkManager="true"/>
     <NodePowerDescriptor ConstantPower="true" RechargeableBattery="false" DisposableBattery="false" DefaultPowerSource="Constant Power" DefaultPowerMode="Synchronised with RxOnWhenIdle"/>
     <BindingTable Size="5"/>
-    <GroupTable Size="1"/>
+    <GroupTable Size="5"/>
     <KeyDescriptorTable Size="1"/>
     <MacInterfaceList>
       <MacInterface RouterAllowed="true" ChannelListSize="1" index="0" RadioType="RT2400MHz" Enabled="true"/>
     </MacInterfaceList>
-    <TrustCenter DeviceTableSize="70"/>
+    <TrustCenter DeviceTableSize="40"/>
     <ZDOServers>
       <DefaultServer OutputAPdu="ZigbeeNodeControlBridge->apduZDP"/>
       <ZdoClient OutputAPdu="ZigbeeNodeControlBridge->apduZDP"/>
@@ -363,6 +371,7 @@
       <MatchDescServer OutputAPdu="ZigbeeNodeControlBridge->apduZDP"/>
       <SimpleDescServer OutputAPdu="ZigbeeNodeControlBridge->apduZDP"/>
       <MgmtLqiServer OutputAPdu="ZigbeeNodeControlBridge->apduZDP"/>
+      <MgmtLeaveServer OutputAPdu="ZigbeeNodeControlBridge->apduZDP"/>
       <MgmtNWKUpdateServer OutputAPdu="ZigbeeNodeControlBridge->apduZDP"/>
       <BindUnbindServer OutputAPdu="ZigbeeNodeControlBridge->apduZDP"/>
       <BindRequestServer OutputAPdu="ZigbeeNodeControlBridge->apduZDP" SimultaneousRequests="0x0003" TimeInterval="0x0001"/>

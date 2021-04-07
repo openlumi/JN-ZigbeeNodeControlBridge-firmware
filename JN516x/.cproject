@@ -18,7 +18,7 @@
 					<folderInfo id="cdt.managedbuild.config.gnu.cygwin.exe.release.134755034.2111203493.456005051.329562131." name="/" resourcePath="">
 						<toolChain id="com.beyondsemi.toolchain.gnu.ba.elf.base.758000115" name="BA ELF GNU toolchain" superClass="com.beyondsemi.toolchain.gnu.ba.elf.base">
 							<targetPlatform binaryParser="org.eclipse.cdt.core.ELF" id="com.beyondsemi.target.gnu.platform.ba.elf.1659789465" superClass="com.beyondsemi.target.gnu.platform.ba.elf"/>
-							<builder arguments="TRACE=1 NODE=COORDINATOR BAUD=1000000 JENNIC_CHIP=JN5169 JENNIC_CHIP_FAMILY=JN516x" autoBuildTarget="all" buildPath="${ProjDirPath}/../Build/ZigbeeNodeControlBridge" cleanBuildTarget="clean" command="make" enableAutoBuild="false" enableCleanBuild="true" enabledIncrementalBuild="true" id="com.beyondsemi.builder.cdt.gnu.2008457690" incrementalBuildTarget="all" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" parallelBuildOn="false" superClass="com.beyondsemi.builder.cdt.gnu"/>
+							<builder arguments="TRACE=1 NODE=COORDINATOR BAUD=1000000 JENNIC_CHIP=JN5169 JENNIC_CHIP_FAMILY=JN516x" autoBuildTarget="all" buildPath="${ProjDirPath}/../Build/ZigbeeNodeControlBridge" cleanBuildTarget="clean" command="make" enableAutoBuild="false" enableCleanBuild="true" enabledIncrementalBuild="true" id="com.beyondsemi.builder.cdt.gnu.2008457690" incrementalBuildTarget="all" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="unlimited" superClass="com.beyondsemi.builder.cdt.gnu"/>
 							<tool id="com.beyondsemi.tool.gnu.ba.elf.compiler.c.base.749370961" name="BA ELF GNU C compiler" superClass="com.beyondsemi.tool.gnu.ba.elf.compiler.c.base">
 								<option defaultValue="gnu.c.optimization.level.size" id="com.beyondsemi.tool.gnu.ba.elf.compiler.c.optimization.339790151" name="Optimization Level" superClass="com.beyondsemi.tool.gnu.ba.elf.compiler.c.optimization" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.debugging.level.1250924270" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" value="gnu.c.debugging.level.none" valueType="enumerated"/>
@@ -176,8 +176,8 @@
 			<resource resourceType="PROJECT" workspacePath="/JN-AN-1216-Zigbee-3-0-IoT-ControlBridge"/>
 		</configuration>
 		<configuration configurationName="ZigbeeNodeControlBridge_Coordinator_1000000"/>
-		<configuration configurationName="ZigbeeNodeControlBridge_Coordinator_115200"/>
 		<configuration configurationName="ZigbeeNodeControlBridge_Coordinator_1000000 (JN5169)"/>
+		<configuration configurationName="ZigbeeNodeControlBridge_Coordinator_115200"/>
 		<configuration configurationName="Release">
 			<resource resourceType="PROJECT" workspacePath="/JN-AN-1216-Zigbee-3-0-IoT-ControlBridge"/>
 		</configuration>
@@ -185,14 +185,14 @@
 		<configuration configurationName="Full Function Device"/>
 		<configuration configurationName="ZigbeeNodeControlBridge_Full_Functionality"/>
 		<configuration configurationName="ZigbeeNodeControlBridge_Full_Functionality_115200"/>
-		<configuration configurationName="ZigbeeNodeControlBridge_Full_Functionality_115200 (JN5169)"/>
 		<configuration configurationName="ZigbeeNodeControlBridge_Coordinator_115200 (JN5168)"/>
+		<configuration configurationName="ZigbeeNodeControlBridge_Full_Functionality_115200 (JN5169)"/>
 		<configuration configurationName="ZigbeeNodeControlBridge_Coordinator_1000000 (JN5168)"/>
 		<configuration configurationName="ZigbeeNodeControlBridge_EEPROM_JN5169"/>
-		<configuration configurationName="Coordinator only"/>
 		<configuration configurationName="ZigbeeNodeControlBridge_EEPROM_JN5168">
 			<resource resourceType="PROJECT" workspacePath="/JN-AN-1216-Zigbee-3-0-IoT-ControlBridge"/>
 		</configuration>
+		<configuration configurationName="Coordinator only"/>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="scannerConfiguration">
