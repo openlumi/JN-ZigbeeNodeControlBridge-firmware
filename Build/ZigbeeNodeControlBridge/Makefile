@@ -88,7 +88,7 @@ ifneq ($(DEBUG), NONE)
 DEBUG_NAME  = _DEBUG_$(DEBUG)
 endif
 
-VERSION ?= $(shell git describe --abbrev=1 --always --tags| sed -r 's/(-.+-g|[\r\n])//g' | sed -r 's/[^a-f0-9]/0/g')
+VERSION ?= $(shell git describe --abbrev=1 --always | sed -r 's/(-.+-g|[\r\n])//g' | sed -r 's/[^a-f0-9]/0/g')
 
 $(info Version $(VERSION))
 
