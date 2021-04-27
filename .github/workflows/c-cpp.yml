@@ -1,4 +1,4 @@
-name: C/C++ CI
+name: Build
 
 on:
   push:
@@ -11,26 +11,52 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Get toolchain
-      run: mkdir -p ${{ env.SDK_DIR }}/Tools && wget https://github.com/openlumi/BA2-toolchain/releases/download/20201219/ba-toolchain-20201219.tar.bz2 -O - | tar -jx -C ${{ env.SDK_DIR }}/Tools && ln -s ba-toolchain ${{ env.SDK_DIR }}/Tools/ba-elf-ba2-r36379
-    - name: Install xmltodict
-      run: pip3 install xmltodict
-    - name: make
-      id: make
-      run: |
-        for CHIP in JN5169 JN5168; do for BAUD in 115200 1000000; do for GP in 0 1; do for DEBUG in NONE LOG; do
-          make -j$(($(nproc)+1)) -C $BUILD_DIR GP_SUPPORT=$GP BAUD=$BAUD JENNIC_CHIP=$CHIP JENNIC_CHIP_FAMILY=JN516x DEBUG=$DEBUG OTA=0
-          make -C $BUILD_DIR BAUD=0 clean
-        done done done done
-        echo "::set-output name=status::success"
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v2.2.2
-      if: steps.make.outputs.status == 'success' && !cancelled()
-      with:
-        # Artifact name
-        name: firmwares.zip
-        # A file, directory or wildcard pattern that describes what to upload
-        path: ${{ env.ARTIFACT_DIR }}/*.bin
+      - uses: actions/checkout@v2
+      - name: Get toolchain
+        run: mkdir -p ${{ env.SDK_DIR }}/Tools && wget https://github.com/openlumi/BA2-toolchain/releases/download/20201219/ba-toolchain-20201219.tar.bz2 -O - | tar -jx -C ${{ env.SDK_DIR }}/Tools && ln -s ba-toolchain ${{ env.SDK_DIR }}/Tools/ba-elf-ba2-r36379
+      - name: Install xmltodict
+        run: pip3 install xmltodict
+      - name: make
+        id: make
+        run: |
+          for CHIP in JN5169 JN5168; do for BAUD in 115200 1000000; do for GP in 0 1; do for DEBUG in NONE LOG; do
+            make -j$(($(nproc)+1)) -C $BUILD_DIR GP_SUPPORT=$GP BAUD=$BAUD JENNIC_CHIP=$CHIP JENNIC_CHIP_FAMILY=JN516x DEBUG=$DEBUG OTA=0
+            make -C $BUILD_DIR BAUD=0 clean
+          done done done done
+          echo "::set-output name=status::success"
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v2.2.2
+        if: steps.make.outputs.status == 'success' && !cancelled()
+        with:
+          # Artifact name
+          name: firmwares.zip
+          # A file, directory or wildcard pattern that describes what to upload
+          path: ${{ env.ARTIFACT_DIR }}/*.bin
+
+      - name: Generate release tag
+        id: tag
+        if: github.ref == 'refs/heads/main' && !cancelled()
+        run: |
+          echo "::set-output name=release_tag::${GITHUB_SHA::4}--$(date +"%Y%m%d-%H%M")"
+          echo "::set-output name=status::success"
+
+      - name: Create changelog
+        id: create_changelog
+        if: steps.tag.outputs.status == 'success' && !cancelled()
+        uses: heinrichreimer/github-changelog-generator-action@v2.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          onlyLastTag: true
+          stripHeaders: true
+
+      - name: Upload firmware to release
+        uses: softprops/action-gh-release@v1
+        if: steps.tag.outputs.status == 'success' && !cancelled()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.tag.outputs.release_tag }}
+          body: ${{ steps.create_changelog.outputs.changelog }}
+          files: ${{ env.ARTIFACT_DIR }}/*.bin
+          prerelease: true
