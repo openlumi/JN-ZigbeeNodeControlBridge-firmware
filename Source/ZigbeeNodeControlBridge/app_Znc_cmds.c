@@ -247,6 +247,9 @@ PRIVATE void APP_vUpdateReportableChange( tuZCL_AttributeReportable *puAttribute
                                           teZCL_ZCLAttributeType    eAttributeDataType,
                                           uint8                     *pu8Buffer,
                                           uint8                     *pu8Offset );
+PRIVATE void dump_PDM(uint8 *pu8LinkRxBuffer, uint16 u16PacketLength);
+PRIVATE void restore_PDM(uint8 *pu8LinkRxBuffer, uint16 u16PacketLength);
+
 /****************************************************************************/
 /***    Exported Variables                        ***/
 /****************************************************************************/
@@ -358,6 +361,9 @@ PUBLIC void APP_vProcessIncomingSerialCommands ( uint8    u8RxByte )
                                    sizeof ( uint32 ),
                                    ( uint8* ) &u32Version,
                                    0 );
+                vLog_Printf ( TRACE_APP, LOG_DEBUG, "\nRaw: %d\n", sZllState.u8RawMode );
+                vLog_Printf ( TRACE_APP, LOG_DEBUG, "\nChannel: %d\n", sZllState.u8MyChannel );
+                vLog_Printf ( TRACE_APP, LOG_DEBUG, "\nMyAddr: %04x\n", sZllState.u16MyAddr );
                 return;
             }
             break;
@@ -2200,7 +2206,28 @@ PUBLIC void APP_vProcessIncomingSerialCommands ( uint8    u8RxByte )
 
 
 #endif
-	            default:
+
+            case E_SL_MSG_DUMP_PDM_RECORD:
+            {
+            	dump_PDM(au8LinkRxBuffer, u16PacketLength);
+            }
+            break;
+
+            case E_SL_MSG_RESTORE_PDM_RECORD_REQUEST:
+            {
+            	restore_PDM(au8LinkRxBuffer, u16PacketLength);
+            }
+            break;
+
+            case E_SL_MSG_RESTORE_PDM_MODE: 
+            {
+                sZllState.eState = PDM_UPDATE;
+                PDM_eSaveRecordData(PDM_ID_APP_ZLL_CMSSION, &sZllState, sizeof(sZllState));
+                bResetIssued    =  TRUE;
+                ZTIMER_eStart( u8IdTimer, ZTIMER_TIME_MSEC ( 1 ) );
+            }
+            break;
+            default:
 	                u8Status = E_SL_MSG_STATUS_UNHANDLED_COMMAND;
 	            break;
         	}
@@ -2209,6 +2236,7 @@ PUBLIC void APP_vProcessIncomingSerialCommands ( uint8    u8RxByte )
         ZNC_BUF_U8_UPD  ( &au8values [ 0 ], u8Status,      u8Length );
         ZNC_BUF_U8_UPD  ( &au8values [ 1 ], u8SeqNum,      u8Length );
         ZNC_BUF_U16_UPD ( &au8values [ 2 ], u16PacketType, u8Length );
+        ZNC_BUF_U8_UPD ( &au8values [ 4 ], sZllState.u8RawMode, u8Length );
         vSL_WriteMessage ( E_SL_MSG_STATUS,
                            u8Length,
                            au8values,
@@ -2222,6 +2250,110 @@ PUBLIC void APP_vProcessIncomingSerialCommands ( uint8    u8RxByte )
 
 }
 
+PRIVATE void dump_PDM( uint8 *pu8LinkRxBuffer, 
+                       uint16 u16PacketLength )
+{
+    uint16    i;
+    uint16    offset=0;
+    uint16    found;
+    uint16    dataLength;
+    uint16    u16DataBytesRead;
+    uint16    hits=0;
+    uint16    fullsize=2;
+    uint16    pdm_addresses[17] = { 0x0010, 0xf000, 0xf001, 0xf002, 0xf003, 0xf004, 0xf005, 0xf006, 0xf100, 0xf101, 0xf102, 0xf103, 0xf104, 0xf105, 0xf106, 0x0001, 0x0002, 0x0003 };
+    uint8     tmp[0x800];
+    uint16    addr = ZNC_RTN_U16(pu8LinkRxBuffer, 0);
+
+    if(u16PacketLength>0 || addr == 0xffff) 
+    {
+    	if( PDM_bDoesDataExist(addr, &dataLength)!=0) {
+			PDM_eReadDataFromRecord ( addr, &tmp[8], dataLength, &u16DataBytesRead );
+			//PDM address
+			tmp[0] = addr >> 8;
+			tmp[1] = addr & 0xff;
+			//Data size
+			tmp[2] = dataLength >> 8;
+			tmp[3] = dataLength & 0xff;
+			//PDM data size
+			tmp[4] = dataLength >> 8;
+			tmp[5] = dataLength & 0xff;
+			//PDM data offset
+			tmp[6]=0;
+			tmp[7]=0;
+			vLog_Printf ( TRACE_APP, LOG_INFO, "\n**Dump %04x [%04x] %04x** ", addr, dataLength, u16DataBytesRead );
+			vSL_WriteMessage ( E_SL_MSG_DUMP_PDM_RECORD_RESPONSE, dataLength+8, tmp, 0 );
+    	}
+        else
+        {
+    		vLog_Printf ( TRACE_APP, LOG_INFO, "\n**Not found %04x [%04x]** ", addr, dataLength );
+			vSL_WriteMessage ( E_SL_MSG_DUMP_PDM_RECORD_RESPONSE, 0, pu8LinkRxBuffer, 0 );
+    	}
+    }
+    else
+    {
+    	for (i=0; i<17; i++) 
+        {
+			if( PDM_bDoesDataExist( pdm_addresses[i], &dataLength ) != 0 ) 
+            {
+				PDM_eReadDataFromRecord ( pdm_addresses[i], &tmp[8], dataLength, &u16DataBytesRead );
+				//PDM address
+				tmp[0] = pdm_addresses[i] >> 8;
+				tmp[1] = pdm_addresses[i] & 0xff;
+				//Data size
+				tmp[2] = dataLength >> 8;
+				tmp[3] = dataLength & 0xff;
+				//PDM data size
+				tmp[4] = dataLength >> 8;
+				tmp[5] = dataLength & 0xff;
+				//PDM data offset
+				tmp[6]=0;
+				tmp[7]=0;
+				vLog_Printf ( TRACE_APP, LOG_INFO, "\n**Dump %04x [%04x] %04x** ", pdm_addresses[i], dataLength, u16DataBytesRead );
+				vSL_WriteMessage ( E_SL_MSG_DUMP_PDM_RECORD_RESPONSE, dataLength+8, tmp, 0 );
+			}
+    	}
+    }
+}
+
+PRIVATE void restore_PDM(uint8 *pu8LinkRxBuffer, uint16 u16PacketLength)
+{
+	uint16    i;
+    uint16    dataLength;
+    uint16    u16DataBytesRead;
+    uint16    blockstart = 0;
+    uint8     tmp[0x800];
+	uint16    addr =     ZNC_RTN_U16 ( pu8LinkRxBuffer, blockstart + 0  );//PDM address
+	uint16    size =     ZNC_RTN_U16 ( pu8LinkRxBuffer, blockstart + 2  );//data size
+	uint16    fullsize = ZNC_RTN_U16 ( pu8LinkRxBuffer, blockstart + 4  );//PDM size
+	uint16    offset =   ZNC_RTN_U16 ( pu8LinkRxBuffer, blockstart + 6  );//data offset
+
+   	vLog_Printf ( TRUE, LOG_INFO, "\n**Restore data addr: %04x size: %04x [%04x] %04x**\n", addr, size, fullsize, offset);
+
+	if( PDM_bDoesDataExist( addr, &dataLength ) ) 
+    {
+		PDM_eReadDataFromRecord ( addr, &tmp, dataLength, &u16DataBytesRead );
+		for( i=0; i<size; i++ )
+        {
+			tmp[i+offset] = pu8LinkRxBuffer[i+blockstart+8];
+		}
+		if( size+offset>dataLength ) 
+        {
+			dataLength=size+offset;
+        }
+
+		PDM_eSaveRecordData( addr, &tmp, dataLength );
+	}
+    else
+    {
+		PDM_eSaveRecordData( addr, &pu8LinkRxBuffer[blockstart + 8], size );
+	}
+
+   	vLog_Printf ( TRUE, LOG_INFO, "\n**Restored %04x [%04x] pkt[%04x]**\n", addr, size, u16PacketLength );
+
+    tmp[0]=size;
+    
+    vSL_WriteMessage ( E_SL_MSG_RESTORE_PDM_RECORD_RESPONSE, 2, tmp, 0 );
+}
 /****************************************************************************
  *
  * NAME: APP_eZclBasicResetToFactoryDefaults
