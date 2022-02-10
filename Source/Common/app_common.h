@@ -154,7 +154,8 @@ typedef enum
 typedef struct {
     enum {
         FACTORY_NEW = 0,
-        NOT_FACTORY_NEW = 0xff
+        NOT_FACTORY_NEW = 0xff,
+        PDM_UPDATE = 0x80
     }eState;
     teNODE_STATES eNodeState;
     uint8 u8DeviceType;
