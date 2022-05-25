@@ -368,15 +368,22 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
 
     vLog_Printf ( TRACE_ZCL,LOG_DEBUG, "\nEntering cbZCL_EndpointCallback %d", psEvent->eEventType);
 
-    if (sZllState.u8RawMode == RAW_MODE_ON){
+      if (sZllState.u8RawMode == RAW_MODE_ON){
         ZPS_tsAfEvent* psStackEvent = psEvent->pZPSevent;
-        if (tmpSqn!=(psEvent->u8TransactionSequenceNumber+psEvent->pZPSevent->uEvent.sApsDataIndEvent.uSrcAddress.u16Addr)
-            && psEvent->eEventType != E_ZCL_CBET_CLUSTER_UPDATE
-            && psEvent->eEventType != E_ZCL_CBET_UNHANDLED_EVENT)
+        if (tmpSqn!=(psEvent->u8TransactionSequenceNumber+psEvent->pZPSevent->uEvent.sApsDataIndEvent.uSrcAddress.u16Addr))
         {
 			tmpSqn=(psEvent->u8TransactionSequenceNumber+psEvent->pZPSevent->uEvent.sApsDataIndEvent.uSrcAddress.u16Addr);
-            Znc_vSendDataIndicationToHost(psStackEvent, au8LinkTxBuffer);
-            return;
+			if (psEvent->eEventType != E_ZCL_CBET_CLUSTER_UPDATE &&
+					psEvent->eEventType != E_ZCL_CBET_UNHANDLED_EVENT &&
+					psEvent->eEventType != E_ZCL_CBET_REPORT_ATTRIBUTES &&
+					psEvent->eEventType != E_ZCL_CBET_READ_ATTRIBUTES_RESPONSE
+				)
+			{
+				Znc_vSendDataIndicationToHost(psStackEvent, au8LinkTxBuffer);
+				return;
+			}
+        }else{
+        	return;
         }
     }
 
