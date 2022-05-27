@@ -370,10 +370,16 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
 
         if (sZllState.u8RawMode == RAW_MODE_ON){
         ZPS_tsAfEvent* psStackEvent = psEvent->pZPSevent;
-        if (psEvent->eEventType != E_ZCL_CBET_CLUSTER_UPDATE  && psEvent->eEventType != E_ZCL_CBET_UNHANDLED_EVENT )
-                   Znc_vSendDataIndicationToHost(psStackEvent, au8LinkTxBuffer);
+        if (tmpSqn!=(psEvent->u8TransactionSequenceNumber+psEvent->pZPSevent->uEvent.sApsDataIndEvent.uSrcAddress.u16Addr)
+            && psEvent->eEventType != E_ZCL_CBET_CLUSTER_UPDATE
+            && psEvent->eEventType != E_ZCL_CBET_REPORT_ATTRIBUTES 
+            && psEvent->eEventType != E_ZCL_CBET_READ_ATTRIBUTES_RESPONSE)
+        {
+			tmpSqn=(psEvent->u8TransactionSequenceNumber+psEvent->pZPSevent->uEvent.sApsDataIndEvent.uSrcAddress.u16Addr);
+            Znc_vSendDataIndicationToHost(psStackEvent, au8LinkTxBuffer);
             return;
         }
+    }
 
 
 
