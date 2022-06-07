@@ -126,7 +126,7 @@ void vAPP_ZCL_DeviceSpecific_Init ( void );
 /****************************************************************************/
 /***        Local Variables                                               ***/
 /****************************************************************************/
-
+uint32_t tmpSqn=0;
 tsZLO_ControlBridgeDevice    sControlBridge;
 tsCLD_ZllDeviceTable         sDeviceTable =  { ZLO_NUMBER_DEVICES,
                                                  { { 0,
