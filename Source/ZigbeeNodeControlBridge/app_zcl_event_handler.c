@@ -368,8 +368,31 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
 
     vLog_Printf ( TRACE_ZCL,LOG_DEBUG, "\nEntering cbZCL_EndpointCallback %d", psEvent->eEventType);
 
-    if (sZllState.u8RawMode == RAW_MODE_ON){      Znc_vSendDataIndicationToHost(psEvent->pZPSevent, au8LinkTxBuffer);    return;   }
-
+    if (sZllState.u8RawMode == RAW_MODE_ON){
+        ZPS_tsAfEvent* psStackEvent = psEvent->pZPSevent;
+        if (tmpSqn!=(psEvent->u8TransactionSequenceNumber+psEvent->pZPSevent->uEvent.sApsDataIndEvent.uSrcAddress.u16Addr))
+        {
+      tmpSqn=(psEvent->u8TransactionSequenceNumber+psEvent->pZPSevent->uEvent.sApsDataIndEvent.uSrcAddress.u16Addr);
+      if (psEvent->eEventType != E_ZCL_CBET_CLUSTER_UPDATE && psEvent->eEventType != E_ZCL_CBET_UNHANDLED_EVENT)
+      {
+        Znc_vSendDataIndicationToHost(psStackEvent, au8LinkTxBuffer);
+        return;
+      }
+    vLog_Printf ( TRACE_ZCL,LOG_DEBUG, "\nProcess non RAW message from %d to %d status %d", 
+    psEvent->pZPSevent->uEvent.sApsDataIndEvent.uSrcAddress.u16Addr,
+    psEvent->pZPSevent->uEvent.sApsDataIndEvent.uDstAddress.u16Addr,
+    psEvent->eZCL_Status
+    );
+        }else{
+    vLog_Printf ( TRACE_ZCL,LOG_DEBUG, "\nFiltered message from %d to %d status %d", 
+    psEvent->pZPSevent->uEvent.sApsDataIndEvent.uSrcAddress.u16Addr,
+    psEvent->pZPSevent->uEvent.sApsDataIndEvent.uDstAddress.u16Addr,
+    psEvent->eZCL_Status
+    );
+          return;
+        }
+    }
+	
     switch (psEvent->eEventType)
     {
         case E_ZCL_CBET_READ_REQUEST:
