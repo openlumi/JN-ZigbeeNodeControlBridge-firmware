@@ -373,7 +373,8 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
         if (tmpSqn!=(psEvent->u8TransactionSequenceNumber+psEvent->pZPSevent->uEvent.sApsDataIndEvent.uSrcAddress.u16Addr))
         {
       tmpSqn=(psEvent->u8TransactionSequenceNumber+psEvent->pZPSevent->uEvent.sApsDataIndEvent.uSrcAddress.u16Addr);
-      if (psEvent->eEventType != E_ZCL_CBET_CLUSTER_UPDATE && psEvent->eEventType != E_ZCL_CBET_UNHANDLED_EVENT)
+      if (psEvent->eEventType != E_ZCL_CBET_CLUSTER_UPDATE && psEvent->eEventType != E_ZCL_CBET_UNHANDLED_EVENT
+      && psEvent->eEventType != E_ZCL_CBET_REPORT_ATTRIBUTES && psEvent->eEventType != E_ZCL_CBET_READ_ATTRIBUTES_RESPONSE)
       {
         Znc_vSendDataIndicationToHost(psStackEvent, au8LinkTxBuffer);
         return;
