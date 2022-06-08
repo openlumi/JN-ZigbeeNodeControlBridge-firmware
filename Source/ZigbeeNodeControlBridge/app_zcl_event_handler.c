@@ -392,7 +392,7 @@ if (sZllState.u8RawMode == RAW_MODE_ON){
     );
           return;
         }else{
-vLog_Printf ( TRACE_ZCL,LOG_DEBUG, "\nProcess report message from %d to %d status %d", 
+    vLog_Printf ( TRACE_ZCL,LOG_DEBUG, "\nProcess report message from %d to %d status %d", 
     psEvent->pZPSevent->uEvent.sApsDataIndEvent.uSrcAddress.u16Addr,
     psEvent->pZPSevent->uEvent.sApsDataIndEvent.uDstAddress.u16Addr,
     psEvent->eZCL_Status
