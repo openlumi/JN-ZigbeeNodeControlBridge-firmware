@@ -368,7 +368,7 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
 
     vLog_Printf ( TRACE_ZCL,LOG_DEBUG, "\nEntering cbZCL_EndpointCallback %d", psEvent->eEventType);
 
-if (sZllState.u8RawMode == RAW_MODE_ON) {
+ if (sZllState.u8RawMode == RAW_MODE_ON) {
         ZPS_tsAfEvent* psStackEvent = psEvent->pZPSevent;
 		vLog_Printf ( TRACE_ZCL,LOG_DEBUG, "\nProcess RAW message from %d to %d ep %d status %d sqn %d evt %d\nzps: evt %d  Profile=%04x Cluster=%04x dst_ep %d src_ep %d rxt %d status %d sec %d lq %d \n", 
       	        psEvent->pZPSevent->uEvent.sApsDataIndEvent.uSrcAddress.u16Addr,
@@ -388,7 +388,7 @@ if (sZllState.u8RawMode == RAW_MODE_ON) {
             	psEvent->pZPSevent->uEvent.sApsDataIndEvent.u8LinkQuality
         );
 
-        if (tmpSqn!=(psEvent->u8TransactionSequenceNumber+psEvent->pZPSevent->uEvent.sApsDataIndEvent.uSrcAddress.u16Addr)) {
+        if (psEvent->u8TransactionSequenceNumber == 0 || tmpSqn!=(psEvent->u8TransactionSequenceNumber+psEvent->pZPSevent->uEvent.sApsDataIndEvent.uSrcAddress.u16Addr)) {
 	        tmpSqn=(psEvent->u8TransactionSequenceNumber+psEvent->pZPSevent->uEvent.sApsDataIndEvent.uSrcAddress.u16Addr);
       		if (psEvent->eEventType != E_ZCL_CBET_CLUSTER_UPDATE && psEvent->eEventType != E_ZCL_CBET_UNHANDLED_EVENT
                 && psEvent->eEventType != E_ZCL_CBET_REPORT_ATTRIBUTES && psEvent->eEventType != E_ZCL_CBET_READ_ATTRIBUTES_RESPONSE)
@@ -405,6 +405,7 @@ if (sZllState.u8RawMode == RAW_MODE_ON) {
 			vLog_Printf ( TRACE_ZCL,LOG_DEBUG, "\nProcess report message\n");
 		}
     }
+
 	
     switch (psEvent->eEventType)
     {
