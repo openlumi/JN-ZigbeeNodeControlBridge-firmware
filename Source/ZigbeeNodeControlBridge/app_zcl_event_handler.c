@@ -370,6 +370,24 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
 
 if (sZllState.u8RawMode == RAW_MODE_ON) {
         ZPS_tsAfEvent* psStackEvent = psEvent->pZPSevent;
+		vLog_Printf ( TRACE_ZCL,LOG_DEBUG, "\nProcess RAW message from %d to %d ep %d status %d sqn %d evt %d\nzps: evt %d  Profile=%04x Cluster=%04x dst_ep %d src_ep %d rxt %d status %d sec %d lq %d \n", 
+      	        psEvent->pZPSevent->uEvent.sApsDataIndEvent.uSrcAddress.u16Addr,
+        	    psEvent->pZPSevent->uEvent.sApsDataIndEvent.uDstAddress.u16Addr,
+        	    psEvent->u8EndPoint,
+            	psEvent->eZCL_Status,
+            	psEvent->u8TransactionSequenceNumber, 
+            	psEvent->eEventType,
+            	psEvent->pZPSevent->eType,
+            	psEvent->pZPSevent->uEvent.sApsDataIndEvent.u16ProfileId,
+            	psEvent->pZPSevent->uEvent.sApsDataIndEvent.u16ClusterId,
+            	psEvent->pZPSevent->uEvent.sApsDataIndEvent.u8DstEndpoint,
+            	psEvent->pZPSevent->uEvent.sApsDataIndEvent.u8SrcEndpoint,
+            	psEvent->pZPSevent->uEvent.sApsDataIndEvent.u32RxTime,
+            	psEvent->pZPSevent->uEvent.sApsDataIndEvent.eStatus,
+            	psEvent->pZPSevent->uEvent.sApsDataIndEvent.eSecurityStatus,
+            	psEvent->pZPSevent->uEvent.sApsDataIndEvent.u8LinkQuality
+        );
+
         if (tmpSqn!=(psEvent->u8TransactionSequenceNumber+psEvent->pZPSevent->uEvent.sApsDataIndEvent.uSrcAddress.u16Addr)) {
 	        tmpSqn=(psEvent->u8TransactionSequenceNumber+psEvent->pZPSevent->uEvent.sApsDataIndEvent.uSrcAddress.u16Addr);
       		if (psEvent->eEventType != E_ZCL_CBET_CLUSTER_UPDATE && psEvent->eEventType != E_ZCL_CBET_UNHANDLED_EVENT
@@ -378,25 +396,13 @@ if (sZllState.u8RawMode == RAW_MODE_ON) {
                 Znc_vSendDataIndicationToHost(psStackEvent, au8LinkTxBuffer);
                 return;
             }
-            vLog_Printf ( TRACE_ZCL,LOG_DEBUG, "\nProcess non RAW message from %d to %d status %d", 
-      	        psEvent->pZPSevent->uEvent.sApsDataIndEvent.uSrcAddress.u16Addr,
-        	    psEvent->pZPSevent->uEvent.sApsDataIndEvent.uDstAddress.u16Addr,
-            	psEvent->eZCL_Status
-            );
+            vLog_Printf ( TRACE_ZCL,LOG_DEBUG, "\nProcess non RAW message\n");
         }else 
         if(psEvent->eEventType != E_ZCL_CBET_REPORT_ATTRIBUTES && psEvent->eEventType != E_ZCL_CBET_READ_ATTRIBUTES_RESPONSE){
-            vLog_Printf ( TRACE_ZCL,LOG_DEBUG, "\nFiltered message from %d to %d status %d", 
-                psEvent->pZPSevent->uEvent.sApsDataIndEvent.uSrcAddress.u16Addr,
-                psEvent->pZPSevent->uEvent.sApsDataIndEvent.uDstAddress.u16Addr,
-                psEvent->eZCL_Status
-            );
+            vLog_Printf ( TRACE_ZCL,LOG_DEBUG, "\nFiltered message\n");
             return;
         }else{
-			vLog_Printf ( TRACE_ZCL,LOG_DEBUG, "\nProcess report message from %d to %d status %d", 
-                psEvent->pZPSevent->uEvent.sApsDataIndEvent.uSrcAddress.u16Addr,
-                psEvent->pZPSevent->uEvent.sApsDataIndEvent.uDstAddress.u16Addr,
-                psEvent->eZCL_Status
-            );
+			vLog_Printf ( TRACE_ZCL,LOG_DEBUG, "\nProcess report message\n");
 		}
     }
 	
