@@ -1609,7 +1609,7 @@ PUBLIC bool zps_bAplZdpUnpackMgmtRtgResponse(ZPS_tsAfEvent *psZdoServerEvent ,
 
         if(ZPS_E_SUCCESS == psReturnStruct->uZdpData.sRtgRsp.u8Status)
         {
-            for(u32LoopCounter = 0 ; u32LoopCounter < psReturnStruct->uZdpData.sRtgRsp.u8RoutingTableEntries ; u32LoopCounter++)
+            for(u32LoopCounter = 0 ; u32LoopCounter < tmpMaxLoop ; u32LoopCounter++)
             {
                 APDU_BUF_READ16_INC( psReturnStruct->uZdpData.sRtgRsp.asRoutingTableList[ u32LoopCounter].u16NwkDstAddr,hAPduInst , u32Location);
                 psReturnStruct->uZdpData.sRtgRsp.asRoutingTableList[ u32LoopCounter].u8Flags = (( pdum_tsAPduInstance* )hAPduInst )->au8Storage[ u32Location++ ];
