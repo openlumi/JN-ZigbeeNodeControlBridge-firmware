@@ -1582,7 +1582,6 @@ PUBLIC bool zps_bAplZdpUnpackMgmtRtgResponse(ZPS_tsAfEvent *psZdoServerEvent ,
         uint8      u8SeqNum;
         uint32     u32Location = 0;
         uint32     u32LoopCounter;
-        uint32     tmpMaxLoop=0;
 	    
         PDUM_thAPduInstance hAPduInst = psZdoServerEvent->uEvent.sApsDataIndEvent.hAPduInst;
         uint16 u16ClusterId = psZdoServerEvent->uEvent.sApsDataIndEvent.u16ClusterId;
@@ -1600,13 +1599,7 @@ PUBLIC bool zps_bAplZdpUnpackMgmtRtgResponse(ZPS_tsAfEvent *psZdoServerEvent ,
         psReturnStruct->uZdpData.sRtgRsp.u8StartIndex = (( pdum_tsAPduInstance* )hAPduInst )->au8Storage[ u32Location++ ];
         psReturnStruct->uZdpData.sRtgRsp.u8RoutingTableCount = (( pdum_tsAPduInstance* )hAPduInst )->au8Storage[ u32Location++ ];
 
-	if (psReturnStruct->uZdpData.sRtgRsp.u8RoutingTableEntries > ZPS_APL_ZDP_MAX_NUM_MGMT_RTG_RSP_ROUTE_TABLE_ENTRIES)
- 		{
- 			tmpMaxLoop=ZPS_APL_ZDP_MAX_NUM_MGMT_RTG_RSP_ROUTE_TABLE_ENTRIES;
- 		}else{
- 			tmpMaxLoop=psReturnStruct->uZdpData.sRtgRsp.u8RoutingTableEntries;
- 		}
-
+	
         if(ZPS_E_SUCCESS == psReturnStruct->uZdpData.sRtgRsp.u8Status)
         {
             for(u32LoopCounter = 0 ; u32LoopCounter < psReturnStruct->uZdpData.sRtgRsp.u8RoutingTableEntries ; u32LoopCounter++)
