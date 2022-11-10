@@ -259,7 +259,13 @@ void APP_vHandleZclEvents ( ZPS_tsAfEvent*    psStackEvent )
                 ZNC_BUF_U8_UPD  ( &au8LinkTxBuffer [u16Length], psStackEvent->uEvent.sApsDataConfirmEvent.u8SrcEndpoint,       u16Length );
                 ZNC_BUF_U8_UPD  ( &au8LinkTxBuffer [u16Length], psStackEvent->uEvent.sApsDataConfirmEvent.u8DstEndpoint,       u16Length );
                 ZNC_BUF_U8_UPD  ( &au8LinkTxBuffer [u16Length], psStackEvent->uEvent.sApsDataConfirmEvent.u8DstAddrMode,       u16Length );
-                ZNC_BUF_U64_UPD ( &au8LinkTxBuffer [u16Length], psStackEvent->uEvent.sApsDataConfirmEvent.uDstAddr.u64Addr,    u16Length );
+                if (psStackEvent->uEvent.sApsDataConfirmEvent.u8DstAddrMode == 0x03)
+                {
+                    ZNC_BUF_U64_UPD ( &au8LinkTxBuffer [u16Length], psStackEvent->uEvent.sApsDataConfirmEvent.uDstAddr.u64Addr, u16Length );
+                }else
+                {
+                    ZNC_BUF_U16_UPD ( &au8LinkTxBuffer [u16Length], psStackEvent->uEvent.sApsDataConfirmEvent.uDstAddr.u16Addr, u16Length );
+                }
                 ZNC_BUF_U8_UPD  ( &au8LinkTxBuffer [u16Length], psStackEvent->uEvent.sApsDataConfirmEvent.u8SequenceNum,       u16Length );
                 vSL_WriteMessage ( E_SL_MSG_APS_DATA_CONFIRM_FAILED,
                                    u16Length,
@@ -382,6 +388,7 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
         }
         else
         {
+        	vLog_Printf(TRACE_ZCL, LOG_DEBUG,  "DROP EVT: status 0x%02x addr 0x%04x\r\n", psEvent->eZCL_Status , psEvent->pZPSevent->uEvent.sApsDataIndEvent.uSrcAddress.u16Addr);
             return;
         }
     }
@@ -397,7 +404,7 @@ PRIVATE void APP_ZCL_cbEndpointCallback ( tsZCL_CallBackEvent*    psEvent )
         case E_ZCL_CBET_READ_ATTRIBUTES_RESPONSE:
         case E_ZCL_CBET_TIMER:
         case E_ZCL_CBET_ZIGBEE_EVENT:
-            vLog_Printf(TRACE_ZCL, LOG_DEBUG,  "EP EVT:No action\r\n", psEvent->eZCL_Status );
+            vLog_Printf(TRACE_ZCL, LOG_DEBUG,  "EP EVT:No action 0x%02x\r\n", psEvent->eZCL_Status );
             break;
 
         case E_ZCL_CBET_ERROR:

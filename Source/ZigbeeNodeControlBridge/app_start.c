@@ -160,8 +160,8 @@ uint8 u8GPZCLTimerEvent;
 #define MCPS_QUEUE_SIZE                                            20
 #define ZPS_QUEUE_SIZE                                             2
 #define APP_QUEUE_SIZE                                             8
-#define TX_QUEUE_SIZE                                              150
-#define RX_QUEUE_SIZE                                              150
+#define TX_QUEUE_SIZE                                              MAX_PACKET_SIZE
+#define RX_QUEUE_SIZE                                              MAX_PACKET_SIZE
 #define BDB_QUEUE_SIZE                                             2
 #define APP_NUM_STD_TMRS                                           4
 
